@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { findStations } from "@/lib/db/queries/stationQueries";
+import { findStations, findStationsByIds } from "@/lib/db/queries/stationQueries";
 import type { District, FuelType, SortBy } from "@/types";
 import { DISTRICTS } from "@/types";
 import { isRateLimited, getClientIp } from "@/lib/api/rateLimit";
@@ -11,6 +11,14 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "요청이 너무 많습니다." }, { status: 429 });
     }
     const params = request.nextUrl.searchParams;
+
+    // ids 파라미터가 있으면 해당 ID 주유소만 반환
+    const ids = params.get("ids");
+    if (ids) {
+      const idList = ids.split(",").filter(Boolean).slice(0, 100);
+      const stations = await findStationsByIds(idList);
+      return NextResponse.json({ stations, total: stations.length, page: 1, limit: stations.length });
+    }
 
     const district = params.get("district") as District | null;
     const area = params.get("area");
