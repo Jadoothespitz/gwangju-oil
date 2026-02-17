@@ -47,11 +47,12 @@ export default function NearbyPage() {
   }, [requestLocation]);
 
   return (
-    <div className="flex flex-col min-h-dvh pb-16">
+    <div className="flex flex-col h-dvh overflow-hidden">
       <Header />
 
       {/* 지도 */}
-      <KakaoMap
+      <div className="relative shrink-0">
+        <KakaoMap
         stations={stations}
         favoriteIds={favoriteSet}
         fuelType={fuelType}
@@ -61,6 +62,7 @@ export default function NearbyPage() {
         selectedStationId={selectedStationId}
         onStationSelect={setSelectedStationId}
       />
+      </div>
 
       {/* 위치 상태 메시지 */}
       {(loading || error) && (
@@ -86,7 +88,7 @@ export default function NearbyPage() {
       )}
 
       {/* 필터 영역 */}
-      <div className="bg-white border-b border-gray-200 px-3 py-2.5 space-y-2">
+      <div className="bg-white border-b border-gray-200 px-3 py-2.5 space-y-2 shrink-0">
         {/* 반경 필터 */}
         <RadiusFilter value={radius} onChange={setRadius} />
 
@@ -98,7 +100,7 @@ export default function NearbyPage() {
       </div>
 
       {/* 주유소 리스트 */}
-      <div className="flex-1 bg-gray-50">
+      <div className="flex-1 min-h-0 bg-gray-50 overflow-y-auto pb-16">
         {!lat && !lng && !loading && !error ? (
           <div className="flex flex-col items-center justify-center py-12 gap-3">
             <svg
