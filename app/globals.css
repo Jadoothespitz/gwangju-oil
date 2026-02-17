@@ -31,11 +31,19 @@ body {
   padding-bottom: max(env(safe-area-inset-bottom, 0px), 1rem);
 }
 
-/* Map container takes remaining height */
+/* Map container — 모바일에서는 작게, 큰 화면에서는 넉넉하게 */
 .map-container {
-  height: 50vh;
-  min-height: 250px;
-  max-height: 400px;
+  height: 25dvh;
+  min-height: 150px;
+  max-height: 200px;
+}
+
+@media (min-width: 640px) {
+  .map-container {
+    height: 40vh;
+    min-height: 250px;
+    max-height: 400px;
+  }
 }
 
 /* Station list scrollable area */
