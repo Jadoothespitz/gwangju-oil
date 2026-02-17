@@ -18,9 +18,15 @@ function loadKakaoSdk(): Promise<void> {
       return;
     }
 
-    // CORS 우회를 위해 자체 프록시를 통해 로드
+    const appKey = process.env.NEXT_PUBLIC_KAKAO_MAP_KEY;
+    if (!appKey) {
+      sdkLoadPromise = null;
+      reject(new Error("NEXT_PUBLIC_KAKAO_MAP_KEY가 설정되지 않았습니다"));
+      return;
+    }
+
     const script = document.createElement("script");
-    script.src = "/api/kakao-sdk";
+    script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${appKey}&autoload=false&libraries=services`;
     script.onload = () => {
       const kakao = (window as any).kakao;
       if (kakao?.maps?.load) {
