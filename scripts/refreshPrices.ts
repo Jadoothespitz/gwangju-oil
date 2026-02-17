@@ -71,7 +71,7 @@ async function refreshPrices() {
   const client = new MongoClient(mongoUri);
   try {
     await client.connect();
-    const db = client.db("gwangju-gas");
+    const db = client.db("gwangju-oil");
     const collection = db.collection("stations");
 
     const stations = await collection

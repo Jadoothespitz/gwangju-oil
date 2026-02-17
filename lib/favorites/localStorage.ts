@@ -1,4 +1,4 @@
-const FAVORITES_KEY = "gwangju-gas-favorites";
+const FAVORITES_KEY = "gwangju-oil-favorites";
 
 export function getFavorites(): string[] {
   if (typeof window === "undefined") return [];

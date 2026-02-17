@@ -61,7 +61,7 @@ async function seed() {
     await client.connect();
     console.log("MongoDB 연결 성공");
 
-    const db = client.db("gwangju-gas");
+    const db = client.db("gwangju-oil");
     const collection = db.collection("stations");
 
     // 기존 데이터 정리

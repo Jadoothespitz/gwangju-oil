@@ -147,7 +147,7 @@ async function main() {
   const client = new MongoClient(mongoUri);
   try {
     await client.connect();
-    const db = client.db("gwangju-gas");
+    const db = client.db("gwangju-oil");
     const collection = db.collection("stations");
 
     const dbStations = await collection.find({ isActive: true }).toArray();
