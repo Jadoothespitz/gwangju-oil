@@ -1,0 +1,584 @@
+[
+  {
+    "name": "해피주유소",
+    "category": "쌍용S-oil주유소",
+    "address": "광주 광산구 건재로 761",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "(주)명진주유소",
+    "category": "GS주유소",
+    "address": "광주 광산구 고봉로 21",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "에이치에스에너지 장수주유소",
+    "category": "현대정유오일뱅크",
+    "address": "광주 광산구 고봉로 239",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "SK시민주유소",
+    "category": "SK주유소",
+    "address": "광주 광산구 고봉로 249",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "스마일셀프주유소",
+    "category": "SK주유소",
+    "address": "광주 광산구 고봉로 541",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "푸른솔주유소",
+    "category": "쌍용S-oil주유소",
+    "address": "광주 광산구 고봉로 905",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "평동천우주유소",
+    "category": "SK주유소",
+    "address": "광주 광산구 동곡로 655",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "더그린 푸른주유소",
+    "category": "GS주유소",
+    "address": "광주 광산구 동곡로 104",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "한성골드주유소",
+    "category": "GS주유소",
+    "address": "광주 광산구 동곡로 407",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "광주주유소",
+    "category": "쌍용S-oil주유소",
+    "address": "광주 광산구 동곡로 422",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "송정동일주유소",
+    "category": "GS주유소",
+    "address": "광주 광산구 동곡로 450",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "SK버들주유소",
+    "category": "SK주유소",
+    "address": "광주 광산구 동곡로 510",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "프라임주유소",
+    "category": "쌍용S-oil주유소",
+    "address": "광주 광산구 목련로 216",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "서강주유소",
+    "category": "SK주유소",
+    "address": "광주 광산구 목련로 250",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "신광주셀프주유소",
+    "category": "쌍용S-oil주유소",
+    "address": "광주 광산구 목련로 372-8",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "웰컴신가주유소",
+    "category": "GS주유소",
+    "address": "광주 광산구 목련로 375",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "GS칼텍스 어등산상주유소",
+    "category": "주유소",
+    "address": "광주 광산구 무진대로 125",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "어등산주유소",
+    "category": "현대정유오일뱅크",
+    "address": "광주 광산구 무진대로 68",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "신창 구도일주유소",
+    "category": "쌍용S-oil주유소",
+    "address": "광주 광산구 북문대로 350",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "다올에너지산업 SK주유소",
+    "category": "SK주유소",
+    "address": "광주 광산구 북문대로 389",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "산월셀프주유소",
+    "category": "현대정유오일뱅크",
+    "address": "광주 광산구 북문대로 579",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "대근주유소",
+    "category": "GS주유소",
+    "address": "광주 광산구 북문대로 639",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "광장주유소",
+    "category": "쌍용S-oil주유소",
+    "address": "광주 광산구 북문대로 907",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "첨단태양주유소",
+    "category": "현대정유오일뱅크",
+    "address": "광주 광산구 비아동원촌길 89",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "신촌주유소",
+    "category": "쌍용S-oil주유소",
+    "address": "광주 광산구 사암로 63",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "마트몰주유소 송헌지점",
+    "category": "SK주유소",
+    "address": "광주 광산구 사암로 104",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "HD현대오일뱅크직영 하남제일주유소",
+    "category": "현대정유오일뱅크",
+    "address": "광주 광산구 사암로 754",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "대창석유직영 공단주유소",
+    "category": "현대정유오일뱅크",
+    "address": "광주 광산구 사암로 800",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "실크로드주유소",
+    "category": "SK주유소",
+    "address": "광주 광산구 사암로 866",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "삼도 주유소",
+    "category": "SK주유소",
+    "address": "광주 광산구 삼도로 327",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "슈퍼크린주유소",
+    "category": "쌍용S-oil주유소",
+    "address": "광주 광산구 상무대로 372",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "이칠주유소",
+    "category": "SK주유소",
+    "address": "광주 광산구 상무대로 378",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "대천유통 진곡화물차주유소",
+    "category": "쌍용S-oil주유소",
+    "address": "광주 광산구 손재로 327",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "송정현대주유소",
+    "category": "현대정유오일뱅크",
+    "address": "광주 광산구 송도로 104",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "한진주유소",
+    "category": "쌍용S-oil주유소",
+    "address": "광주 광산구 송도로 244",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "진영 주유소",
+    "category": "SK주유소",
+    "address": "광주 광산구 송도로 292",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "유한회사 연성주유소",
+    "category": "쌍용S-oil주유소",
+    "address": "광주 광산구 어등대로 247",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "전송주유소",
+    "category": "SK주유소",
+    "address": "광주 광산구 어등대로 583",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "순양주유소",
+    "category": "쌍용S-oil주유소",
+    "address": "광주 광산구 어등대로 667",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "현대오일뱅크 우공주유소",
+    "category": "현대정유오일뱅크",
+    "address": "광주 광산구 영광로 3492",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "천지주유소",
+    "category": "SK주유소",
+    "address": "광주 광산구 영광로 3270",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "HD현대오일뱅크 장덕셀프주유소",
+    "category": "현대정유오일뱅크",
+    "address": "광주 광산구 왕버들로 59",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "대각주유소",
+    "category": "GS주유소",
+    "address": "광주 광산구 용아로 143",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "브이넥스 푸른7주유소",
+    "category": "SK주유소",
+    "address": "광주 광산구 용아로 330",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "대천주유소",
+    "category": "쌍용S-oil주유소",
+    "address": "광주 광산구 용진로 599",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "대촌주유소",
+    "category": "쌍용S-oil주유소",
+    "address": "광주 남구 고싸움로 169",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "드림에너지주유소",
+    "category": "SK주유소",
+    "address": "광주 남구 대남대로 336",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "새론주유소",
+    "category": "쌍용S-oil주유소",
+    "address": "광주 남구 대남대로 347",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "대남로주유소",
+    "category": "SK주유소",
+    "address": "광주 남구 대남대로 399",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "양촌주유소",
+    "category": "SK주유소",
+    "address": "광주 남구 포충로 121",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "대촌상주유소",
+    "category": "쌍용S-oil주유소",
+    "address": "광주 남구 회재로 206",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "풍암주유소",
+    "category": "GS주유소",
+    "address": "광주 남구 회재로 1208",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "화력주유소",
+    "category": "GS주유소",
+    "address": "광주 남구 회재로 338",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "솔바우주유소",
+    "category": "쌍용S-oil주유소",
+    "address": "광주 동구 남계길 4",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "평화셀프주유소/주식회사 반디컴퍼니",
+    "category": "주유소",
+    "address": "광주 북구 경열로 257",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "두암주유소",
+    "category": "쌍용S-oil주유소",
+    "address": "광주 북구 군왕로 103",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "북성주유소",
+    "category": "GS주유소",
+    "address": "광주 북구 금남로 49",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "차나라주유소",
+    "category": "현대정유오일뱅크",
+    "address": "광주 북구 동문대로 138",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "광주화물터미널주유소",
+    "category": "현대정유오일뱅크",
+    "address": "광주 북구 동문대로 288",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "도동재주유소",
+    "category": "쌍용S-oil주유소",
+    "address": "광주 북구 동문대로 410",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "서림주유소",
+    "category": "GS주유소",
+    "address": "광주 북구 무등로 126",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "동림주유소",
+    "category": "현대정유오일뱅크",
+    "address": "광주 북구 북문대로 257",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "빛고을로주유소",
+    "category": "현대정유오일뱅크",
+    "address": "광주 북구 빛고을대로 657",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "엠앤지 첨단북광주IC주유소",
+    "category": "SK주유소",
+    "address": "광주 북구 삼소로 318",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "남선석유 서방셀프주유소",
+    "category": "현대정유오일뱅크",
+    "address": "광주 북구 서암대로 323",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "무지개주유소 경훈에너지",
+    "category": "주유소",
+    "address": "광주 북구 서하로 237",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "코끼리주유소",
+    "category": "SK주유소",
+    "address": "광주 북구 서하로 77",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "매곡주유소",
+    "category": "현대정유오일뱅크",
+    "address": "광주 북구 서하로 86",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "플러스주유소",
+    "category": "현대정유오일뱅크",
+    "address": "광주 북구 설죽로 408",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "지산주유소",
+    "category": "쌍용S-oil주유소",
+    "address": "광주 북구 양산택지로 157",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "SK에너지 보람주유소",
+    "category": "SK주유소",
+    "address": "광주 북구 용봉로 24",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "세본주유소",
+    "category": "SK주유소",
+    "address": "광주 북구 용주로 21",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "일곡우리주유소",
+    "category": "현대정유오일뱅크",
+    "address": "광주 북구 우치로 595",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "패밀리셀프주유소",
+    "category": "SK주유소",
+    "address": "광주 북구 우치로 670",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "용전주유소",
+    "category": "쌍용S-oil주유소",
+    "address": "광주 북구 우치로 809",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "용전IC주유소",
+    "category": "GS주유소",
+    "address": "광주 북구 우치로 842",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "일곡주유소",
+    "category": "쌍용S-oil주유소",
+    "address": "광주 북구 우치로422번길 22",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "세오직영미래주유소",
+    "category": "SK주유소",
+    "address": "광주 북구 임방울대로 979",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "케이피유통 본촌주유소",
+    "category": "GS주유소",
+    "address": "광주 북구 하서로 530",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "북광주IC주유소",
+    "category": "현대정유오일뱅크",
+    "address": "광주 북구 하서로 678",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "돌고개주유소",
+    "category": "현대정유오일뱅크",
+    "address": "광주 서구 경열로 54",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "시민 주유소",
+    "category": "GS주유소",
+    "address": "광주 서구 눌재로 328",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "상록주유소",
+    "category": "현대정유오일뱅크",
+    "address": "광주 서구 상무대로 1180",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "컨벤션주유소",
+    "category": "쌍용S-oil주유소",
+    "address": "광주 서구 상무대로 714",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "운천주유소",
+    "category": "현대정유오일뱅크",
+    "address": "광주 서구 상무대로 758",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "부일주유소",
+    "category": "쌍용S-oil주유소",
+    "address": "광주 서구 상무대로 933",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "골든타임주유소",
+    "category": "쌍용S-oil주유소",
+    "address": "광주 서구 상무대로1206번길 3",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "청정이엔지주유소",
+    "category": "GS주유소",
+    "address": "광주 서구 상무자유로 18",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "일프로주유소",
+    "category": "현대정유오일뱅크",
+    "address": "광주 서구 운천로 206",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "우리셀프주유소",
+    "category": "쌍용S-oil주유소",
+    "address": "광주 서구 죽봉대로 24",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "서광주역주유소",
+    "category": "주유소",
+    "address": "광주 서구 풍서우로 152",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "풍암대림주유소",
+    "category": "쌍용S-oil주유소",
+    "address": "광주 서구 풍서좌로 83",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "예향주유소",
+    "category": "GS주유소",
+    "address": "광주 서구 풍암신흥로 2",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "대광셀프주유소",
+    "category": "GS주유소",
+    "address": "광주 서구 하남대로 556",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "대동에너지주유소",
+    "category": "현대정유오일뱅크",
+    "address": "광주 서구 회재로 783",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "매월유통단지주유소",
+    "category": "현대정유오일뱅크",
+    "address": "광주 서구 회재로 746",
+    "dataDate": "2025-09-24"
+  },
+  {
+    "name": "마트몰 더믿음가득주유소",
+    "category": "SK주유소",
+    "address": "광주 북구 하남대로 777",
+    "dataDate": "2025-09-24"
+  }
+]

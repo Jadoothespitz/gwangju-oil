@@ -1,0 +1,41 @@
+{
+  "name": "gwangju-gas",
+  "version": "1.0.0",
+  "description": "광주광역시 상생카드 가맹 주유소 유가 비교",
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "seed": "tsx scripts/seed.ts",
+    "seed:download": "tsx scripts/downloadSangsaeng.ts",
+    "seed:geocode": "tsx scripts/geocodeSangsaeng.ts",
+"opinet:link": "tsx scripts/linkOpinet.ts",
+    "prices:refresh": "tsx scripts/refreshPrices.ts"
+  },
+  "dependencies": {
+    "clsx": "^2.1.1",
+"mongodb": "^7.1.0",
+    "next": "^16.1.6",
+    "proj4": "^2.20.2",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "react-kakao-maps-sdk": "^1.2.0",
+    "swr": "^2.4.0",
+    "tailwind-merge": "^3.4.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.18",
+    "@types/node": "^25.2.3",
+    "@types/proj4": "^2.5.6",
+    "@types/react": "^19.2.13",
+    "@types/react-dom": "^19.2.3",
+    "dotenv": "^17.2.4",
+    "eslint": "^9.39.2",
+    "eslint-config-next": "^16.1.6",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.18",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  }
+}
