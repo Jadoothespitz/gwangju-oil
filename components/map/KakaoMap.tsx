@@ -8,41 +8,58 @@ import { formatPrice } from "@/lib/utils/formatPrice";
 // 전역 SDK 로딩 상태 관리
 let sdkLoadPromise: Promise<void> | null = null;
 
-function loadKakaoSdk(): Promise<void> {
-  if (sdkLoadPromise) return sdkLoadPromise;
-
-  sdkLoadPromise = new Promise((resolve, reject) => {
-    // 이미 maps.load가 완료된 경우
-    if ((window as any).kakao?.maps?.LatLng) {
-      resolve();
-      return;
-    }
-
-    const appKey = process.env.NEXT_PUBLIC_KAKAO_MAP_KEY;
-    if (!appKey) {
-      sdkLoadPromise = null;
-      reject(new Error("NEXT_PUBLIC_KAKAO_MAP_KEY가 설정되지 않았습니다"));
-      return;
-    }
-
+function tryLoadScript(src: string): Promise<void> {
+  return new Promise((resolve, reject) => {
     const script = document.createElement("script");
-    script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${appKey}&autoload=false&libraries=services`;
+    script.src = src;
     script.onload = () => {
       const kakao = (window as any).kakao;
       if (kakao?.maps?.load) {
         kakao.maps.load(() => resolve());
       } else {
-        sdkLoadPromise = null;
         reject(new Error("Kakao SDK loaded but kakao.maps not found"));
       }
     };
-    script.onerror = () => {
-      sdkLoadPromise = null;
-      reject(new Error("Failed to load Kakao Maps SDK"));
-    };
+    script.onerror = () => reject(new Error(`Failed to load: ${src}`));
     document.head.appendChild(script);
   });
+}
 
+function loadKakaoSdk(): Promise<void> {
+  if (sdkLoadPromise) return sdkLoadPromise;
+
+  sdkLoadPromise = (async () => {
+    // 이미 maps.load가 완료된 경우
+    if ((window as any).kakao?.maps?.LatLng) return;
+
+    const appKey = process.env.NEXT_PUBLIC_KAKAO_MAP_KEY;
+    const directUrl = appKey
+      ? `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${appKey}&autoload=false&libraries=services`
+      : null;
+
+    // 1차: 직접 로딩 시도
+    if (directUrl) {
+      try {
+        await tryLoadScript(directUrl);
+        return;
+      } catch {
+        // 직접 로딩 실패 → 프록시 폴백
+      }
+    }
+
+    // 2차: 프록시 폴백
+    try {
+      await tryLoadScript("/api/kakao-sdk");
+      return;
+    } catch {
+      // 프록시도 실패
+    }
+
+    sdkLoadPromise = null;
+    throw new Error("카카오 지도 SDK를 로드할 수 없습니다");
+  })();
+
+  sdkLoadPromise.catch(() => { sdkLoadPromise = null; });
   return sdkLoadPromise;
 }
 
