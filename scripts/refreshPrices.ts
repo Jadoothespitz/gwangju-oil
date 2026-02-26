@@ -88,6 +88,33 @@ async function refreshPrices() {
 
     console.log(`${stations.length}개 주유소 가격 갱신 시작...`);
 
+    // Fallback: aroundAll에 없는 주유소는 detailById로 직접 조회
+    const missingIds = stations
+      .map((s) => s.opinet_id)
+      .filter((id) => !gasolinePrices.has(id) && !dieselPrices.has(id));
+
+    if (missingIds.length > 0) {
+      console.log(`  aroundAll 미수집 ${missingIds.length}개 → detailById 직접 조회`);
+      for (const id of missingIds) {
+        try {
+          const res = await fetch(
+            `https://www.opinet.co.kr/api/detailById.do?code=${API_KEY}&out=json&id=${id}`
+          );
+          const data = await res.json();
+          const detail = data.RESULT?.OIL?.[0];
+          if (detail?.OIL_PRICE) {
+            for (const p of detail.OIL_PRICE) {
+              if (p.PRODCD === "B027" && p.PRICE) gasolinePrices.set(id, p.PRICE);
+              if (p.PRODCD === "D047" && p.PRICE) dieselPrices.set(id, p.PRICE);
+            }
+          }
+        } catch {
+          // skip
+        }
+        await delay(200);
+      }
+    }
+
     let updated = 0;
     const notUpdated: string[] = [];
     const now = new Date().toISOString();
