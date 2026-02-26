@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>가격 갱신 커버리지 확인</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>
+    body { margin: 0; font-family: sans-serif; }
+    #map { height: 100vh; }
+    .legend {
+      position: fixed; top: 10px; right: 10px; z-index: 1000;
+      background: white; padding: 12px; border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2); font-size: 13px; line-height: 1.8;
+    }
+    .dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+  </style>
+</head>
+<body>
+<div id="map"></div>
+<div class="legend">
+  <b>범례</b><br>
+  <span class="dot" style="background:#e53e3e"></span> 중심 좌표 (반경 8km)<br>
+  <span class="dot" style="background:#3182ce"></span> 가격 있는 주유소<br>
+  <span class="dot" style="background:#718096"></span> 가격 없는 주유소<br>
+  <br>
+  <div id="stats">불러오는 중...</div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const map = L.map('map').setView([35.155, 126.88], 12);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '© OpenStreetMap'
+}).addTo(map);
+
+const CENTERS = [
+  { lat: 35.1397, lng: 126.7930, name: "광산구 중심" },
+  { lat: 35.1100, lng: 126.7930, name: "광산구 남부" },
+  { lat: 35.1800, lng: 126.7700, name: "광산구 북서부" },
+  { lat: 35.1487, lng: 126.8560, name: "서구" },
+  { lat: 35.1740, lng: 126.9120, name: "북구 중심" },
+  { lat: 35.2100, lng: 126.8900, name: "북구 북부" },
+  { lat: 35.1460, lng: 126.9230, name: "동구" },
+  { lat: 35.1330, lng: 126.9020, name: "남구 중심" },
+  { lat: 35.1050, lng: 126.8800, name: "남구 남부" },
+];
+
+// 중심 좌표 + 반경 원
+CENTERS.forEach(c => {
+  L.circle([c.lat, c.lng], {
+    radius: 8000,
+    color: '#e53e3e', fillColor: '#e53e3e', fillOpacity: 0.08, weight: 1.5
+  }).addTo(map).bindTooltip(c.name);
+
+  L.circleMarker([c.lat, c.lng], {
+    radius: 7, color: '#e53e3e', fillColor: '#e53e3e', fillOpacity: 1
+  }).addTo(map).bindPopup(`<b>${c.name}</b><br>${c.lat}, ${c.lng}`);
+});
+
+// 주유소 데이터 fetch
+async function loadStations() {
+  try {
+    const res = await fetch('http://localhost:3000/api/stations?limit=200&fuelType=gasoline');
+    const data = await res.json();
+    const stations = data.stations || [];
+
+    let withPrice = 0, noPrice = 0;
+
+    stations.forEach(s => {
+      const hasPrice = s.prices?.gasoline || s.prices?.diesel;
+      const color = hasPrice ? '#3182ce' : '#718096';
+      const lat = s.location?.coordinates?.[1];
+      const lng = s.location?.coordinates?.[0];
+      if (!lat || !lng) return;
+
+      if (hasPrice) withPrice++; else noPrice++;
+
+      L.circleMarker([lat, lng], {
+        radius: 5, color, fillColor: color, fillOpacity: 0.9, weight: 1
+      }).addTo(map).bindPopup(
+        `<b>${s.name}</b><br>${s.address}<br>` +
+        (s.prices?.gasoline ? `휘발유: ${s.prices.gasoline}원` : '휘발유: 없음') + '<br>' +
+        (s.prices?.diesel ? `경유: ${s.prices.diesel}원` : '경유: 없음')
+      );
+    });
+
+    document.getElementById('stats').innerHTML =
+      `총 ${stations.length}개<br>` +
+      `<span style="color:#3182ce">● 가격 있음: ${withPrice}개</span><br>` +
+      `<span style="color:#718096">● 가격 없음: ${noPrice}개</span>`;
+  } catch(e) {
+    document.getElementById('stats').innerHTML = '데이터 로드 실패';
+    console.error(e);
+  }
+}
+
+loadStations();
+</script>
+</body>
+</html>

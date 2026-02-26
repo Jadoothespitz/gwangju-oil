@@ -82,13 +82,14 @@ async function refreshPrices() {
     const stations = await collection
       .find(
         { isActive: true, opinet_id: { $exists: true, $ne: null } },
-        { projection: { opinet_id: 1 } }
+        { projection: { opinet_id: 1, name: 1 } }
       )
       .toArray();
 
     console.log(`${stations.length}개 주유소 가격 갱신 시작...`);
 
     let updated = 0;
+    const notUpdated: string[] = [];
     const now = new Date().toISOString();
 
     for (const station of stations) {
@@ -108,10 +109,16 @@ async function refreshPrices() {
           }
         );
         updated++;
+      } else {
+        notUpdated.push(`${station.name} (${station.opinet_id})`);
       }
     }
 
     console.log(`\n가격 갱신 완료: ${updated}개 성공`);
+    if (notUpdated.length > 0) {
+      console.log(`\n가격 미수집 (opinet_id 있으나 aroundAll에 없음) ${notUpdated.length}개:`);
+      notUpdated.forEach((s, i) => console.log(`  ${i + 1}. ${s}`));
+    }
   } finally {
     await client.close();
   }

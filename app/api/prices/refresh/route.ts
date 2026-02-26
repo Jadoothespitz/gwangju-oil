@@ -73,11 +73,12 @@ export async function POST(request: NextRequest) {
     const stations = await collection
       .find(
         { isActive: true, opinet_id: { $exists: true, $ne: null } },
-        { projection: { opinet_id: 1 } }
+        { projection: { opinet_id: 1, name: 1 } }
       )
       .toArray();
 
     let updated = 0;
+    const notUpdated: string[] = [];
     const now = new Date().toISOString();
 
     for (const station of stations) {
@@ -97,6 +98,8 @@ export async function POST(request: NextRequest) {
           }
         );
         updated++;
+      } else {
+        notUpdated.push(`${station.name} (${station.opinet_id})`);
       }
     }
 
@@ -106,6 +109,7 @@ export async function POST(request: NextRequest) {
       total: stations.length,
       gasolinePricesCollected: gasolinePrices.size,
       dieselPricesCollected: dieselPrices.size,
+      notUpdated,
     });
   } catch (error) {
     console.error("Price refresh error:", error);
