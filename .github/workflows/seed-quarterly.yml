@@ -1,0 +1,37 @@
+name: 분기별 상생카드 데이터 갱신
+
+on:
+  schedule:
+    # 매년 1월, 4월, 7월, 10월 1일 오전 9시 (KST = UTC+9)
+    - cron: "0 0 1 1,4,7,10 *"
+  workflow_dispatch: # 수동 실행 버튼
+
+jobs:
+  seed:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 코드 체크아웃
+        uses: actions/checkout@v4
+
+      - name: Node.js 설치
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: 의존성 설치
+        run: npm ci
+
+      - name: 상생카드 데이터 다운로드 및 DB 갱신
+        env:
+          MONGODB_URI: ${{ secrets.MONGODB_URI }}
+          DATA_GO_KR_API_KEY: ${{ secrets.DATA_GO_KR_API_KEY }}
+          KAKAO_REST_API_KEY: ${{ secrets.KAKAO_REST_API_KEY }}
+        run: npm run seed
+
+      - name: 오피넷 가격 연동
+        env:
+          MONGODB_URI: ${{ secrets.MONGODB_URI }}
+          OPINET_API_KEY: ${{ secrets.OPINET_API_KEY }}
+        run: npm run opinet:link
