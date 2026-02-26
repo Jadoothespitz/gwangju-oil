@@ -19,12 +19,14 @@ const API_KEY = process.env.OPINET_API_KEY!;
 const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 const GWANGJU_CENTERS = [
-  { name: "광산구", lat: 35.1397, lng: 126.7930 },
+  { name: "광산구 중심", lat: 35.1397, lng: 126.7930 },
+  { name: "광산구 남부", lat: 35.1100, lng: 126.7930 },
   { name: "서구", lat: 35.1487, lng: 126.8560 },
   { name: "북구", lat: 35.1740, lng: 126.9120 },
   { name: "동구", lat: 35.1460, lng: 126.9230 },
   { name: "남구", lat: 35.1330, lng: 126.9020 },
 ];
+const SEARCH_RADIUS = 8000;
 
 async function refreshPrices() {
   const mongoUri = process.env.MONGODB_URI;
@@ -47,7 +49,7 @@ async function refreshPrices() {
     const katec = wgs84ToKatec(center.lng, center.lat);
 
     // 휘발유
-    const gasUrl = `https://www.opinet.co.kr/api/aroundAll.do?code=${API_KEY}&out=json&x=${Math.round(katec.x)}&y=${Math.round(katec.y)}&radius=5000&prodcd=B027&sort=1`;
+    const gasUrl = `https://www.opinet.co.kr/api/aroundAll.do?code=${API_KEY}&out=json&x=${Math.round(katec.x)}&y=${Math.round(katec.y)}&radius=${SEARCH_RADIUS}&prodcd=B027&sort=1`;
     const gasRes = await fetch(gasUrl);
     const gasData = await gasRes.json();
     for (const s of gasData.RESULT?.OIL || []) {
@@ -56,7 +58,7 @@ async function refreshPrices() {
     await delay(300);
 
     // 경유
-    const dslUrl = `https://www.opinet.co.kr/api/aroundAll.do?code=${API_KEY}&out=json&x=${Math.round(katec.x)}&y=${Math.round(katec.y)}&radius=5000&prodcd=D047&sort=1`;
+    const dslUrl = `https://www.opinet.co.kr/api/aroundAll.do?code=${API_KEY}&out=json&x=${Math.round(katec.x)}&y=${Math.round(katec.y)}&radius=${SEARCH_RADIUS}&prodcd=D047&sort=1`;
     const dslRes = await fetch(dslUrl);
     const dslData = await dslRes.json();
     for (const s of dslData.RESULT?.OIL || []) {

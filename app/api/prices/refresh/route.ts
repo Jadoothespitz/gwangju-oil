@@ -4,19 +4,21 @@ import { wgs84ToKatec } from "@/lib/geo/coordinateConverter";
 import { isRateLimited, getClientIp } from "@/lib/api/rateLimit";
 
 const GWANGJU_CENTERS = [
-  { lat: 35.1397, lng: 126.7930 },
-  { lat: 35.1487, lng: 126.8560 },
-  { lat: 35.1740, lng: 126.9120 },
-  { lat: 35.1460, lng: 126.9230 },
-  { lat: 35.1330, lng: 126.9020 },
+  { lat: 35.1397, lng: 126.7930 }, // 광산구 중심
+  { lat: 35.1100, lng: 126.7930 }, // 광산구 남부 (외곽 커버)
+  { lat: 35.1487, lng: 126.8560 }, // 서구
+  { lat: 35.1740, lng: 126.9120 }, // 북구
+  { lat: 35.1460, lng: 126.9230 }, // 동구
+  { lat: 35.1330, lng: 126.9020 }, // 남구
 ];
+const SEARCH_RADIUS = 8000;
 
 export async function POST(request: NextRequest) {
   try {
     // 레이트 리밋 (5분에 1회)
     const ip = getClientIp(request);
     if (isRateLimited(`refresh:${ip}`, 1, 300_000)) {
-      return NextResponse.json({ error: "요청이 너무 많습니다." }, { status: 429 });
+      return NextResponse.json({ error: "Too many requests." }, { status: 429 });
     }
 
     // 보안 키 확인 (CRON_SECRET 미설정 시에도 차단)
@@ -24,13 +26,13 @@ export async function POST(request: NextRequest) {
     const cronSecret = process.env.CRON_SECRET;
 
     if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
-      return NextResponse.json({ error: "권한 없음" }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
     }
 
     const apiKey = process.env.OPINET_API_KEY;
     if (!apiKey) {
       return NextResponse.json(
-        { error: "OPINET_API_KEY가 설정되지 않았습니다." },
+        { error: "OPINET_API_KEY is not set." },
         { status: 500 }
       );
     }
@@ -43,7 +45,7 @@ export async function POST(request: NextRequest) {
       const katec = wgs84ToKatec(center.lng, center.lat);
 
       const gasRes = await fetch(
-        `https://www.opinet.co.kr/api/aroundAll.do?code=${apiKey}&out=json&x=${Math.round(katec.x)}&y=${Math.round(katec.y)}&radius=5000&prodcd=B027&sort=1`
+        `https://www.opinet.co.kr/api/aroundAll.do?code=${apiKey}&out=json&x=${Math.round(katec.x)}&y=${Math.round(katec.y)}&radius=${SEARCH_RADIUS}&prodcd=B027&sort=1`
       );
       const gasData = await gasRes.json();
       for (const s of gasData.RESULT?.OIL || []) {
@@ -51,7 +53,7 @@ export async function POST(request: NextRequest) {
       }
 
       const dslRes = await fetch(
-        `https://www.opinet.co.kr/api/aroundAll.do?code=${apiKey}&out=json&x=${Math.round(katec.x)}&y=${Math.round(katec.y)}&radius=5000&prodcd=D047&sort=1`
+        `https://www.opinet.co.kr/api/aroundAll.do?code=${apiKey}&out=json&x=${Math.round(katec.x)}&y=${Math.round(katec.y)}&radius=${SEARCH_RADIUS}&prodcd=D047&sort=1`
       );
       const dslData = await dslRes.json();
       for (const s of dslData.RESULT?.OIL || []) {
@@ -96,16 +98,16 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json({
-      message: `가격 갱신 완료`,
+      message: "Prices updated successfully.",
       updated,
       total: stations.length,
       gasolinePricesCollected: gasolinePrices.size,
       dieselPricesCollected: dieselPrices.size,
     });
   } catch (error) {
-    console.error("가격 갱신 오류:", error);
+    console.error("Price refresh error:", error);
     return NextResponse.json(
-      { error: "서버 오류가 발생했습니다." },
+      { error: "Internal server error." },
       { status: 500 }
     );
   }
