@@ -21,10 +21,13 @@ const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
 const GWANGJU_CENTERS = [
   { name: "광산구 중심", lat: 35.1397, lng: 126.7930 },
   { name: "광산구 남부", lat: 35.1100, lng: 126.7930 },
+  { name: "광산구 북서부", lat: 35.1800, lng: 126.7700 },
   { name: "서구", lat: 35.1487, lng: 126.8560 },
-  { name: "북구", lat: 35.1740, lng: 126.9120 },
+  { name: "북구 중심", lat: 35.1740, lng: 126.9120 },
+  { name: "북구 북부", lat: 35.2100, lng: 126.8900 },
   { name: "동구", lat: 35.1460, lng: 126.9230 },
-  { name: "남구", lat: 35.1330, lng: 126.9020 },
+  { name: "남구 중심", lat: 35.1330, lng: 126.9020 },
+  { name: "남구 남부", lat: 35.1050, lng: 126.8800 },
 ];
 const SEARCH_RADIUS = 8000;
 
