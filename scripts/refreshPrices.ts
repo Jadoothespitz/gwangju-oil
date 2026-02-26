@@ -111,7 +111,7 @@ async function refreshPrices() {
         } catch {
           // skip
         }
-        await delay(200);
+        await delay(100);
       }
     }
 

@@ -98,7 +98,7 @@ export async function POST(request: NextRequest) {
       } catch {
         // skip
       }
-      await new Promise((resolve) => setTimeout(resolve, 200));
+      await new Promise((resolve) => setTimeout(resolve, 100));
     }
 
     let updated = 0;
