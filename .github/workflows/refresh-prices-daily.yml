@@ -1,0 +1,30 @@
+name: 일별 유가 갱신
+
+on:
+  schedule:
+    - cron: "0 21 * * *" # 06:00 KST
+    - cron: "0 9 * * *" # 18:00 KST
+  workflow_dispatch: # 수동 실행 버튼
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 코드 체크아웃
+        uses: actions/checkout@v4
+
+      - name: Node.js 설치
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: 의존성 설치
+        run: npm ci
+
+      - name: 유가 갱신
+        env:
+          MONGODB_URI: ${{ secrets.MONGODB_URI }}
+          OPINET_API_KEY: ${{ secrets.OPINET_API_KEY }}
+        run: npm run prices:refresh
