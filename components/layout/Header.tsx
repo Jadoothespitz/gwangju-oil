@@ -9,7 +9,7 @@ export default function Header() {
       <div className="flex items-center justify-between h-12 px-4 max-w-lg mx-auto">
         <div className="w-8" />
         <h1 className="text-base font-bold tracking-tight">
-          광주상생카드 기름집들⛽
+          오매나기름집⛽
         </h1>
         <a
           href={FEEDBACK_URL}

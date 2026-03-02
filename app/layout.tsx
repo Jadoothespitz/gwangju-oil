@@ -2,13 +2,13 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "광주 주유소 가격비교",
+  title: "오매나! 광주 기름 싸다!",
   description: "광주광역시 상생카드 가맹 주유소 가격 비교 서비스",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "광주주유소",
+    title: "오매나기름집",
   },
 };
 
