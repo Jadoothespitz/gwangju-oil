@@ -8,6 +8,7 @@
  */
 import * as dns from "dns";
 import * as path from "path";
+import { appendFileSync } from "fs";
 import { config } from "dotenv";
 import { MongoClient } from "mongodb";
 import { wgs84ToKatec } from "../lib/geo/coordinateConverter";
@@ -82,7 +83,7 @@ async function refreshPrices() {
     const stations = await collection
       .find(
         { isActive: true, opinet_id: { $exists: true, $ne: null } },
-        { projection: { opinet_id: 1, name: 1 } }
+        { projection: { opinet_id: 1, name: 1, prices: 1 } }
       )
       .toArray();
 
@@ -119,9 +120,23 @@ async function refreshPrices() {
     const notUpdated: string[] = [];
     const now = new Date().toISOString();
 
+    type ReportRow = {
+      name: string;
+      gasOld: number | null;
+      gasNew: number | null;
+      gasDelta: number | null;
+      dslOld: number | null;
+      dslNew: number | null;
+      dslDelta: number | null;
+      failed: boolean;
+    };
+    const report: ReportRow[] = [];
+
     for (const station of stations) {
-      const gasPrice = gasolinePrices.get(station.opinet_id);
-      const dslPrice = dieselPrices.get(station.opinet_id);
+      const gasPrice = gasolinePrices.get(station.opinet_id) ?? null;
+      const dslPrice = dieselPrices.get(station.opinet_id) ?? null;
+      const gasOld: number | null = station.prices?.gasoline ?? null;
+      const dslOld: number | null = station.prices?.diesel ?? null;
 
       if (gasPrice != null || dslPrice != null) {
         await collection.updateOne(
@@ -136,15 +151,75 @@ async function refreshPrices() {
           }
         );
         updated++;
+        report.push({
+          name: station.name,
+          gasOld,
+          gasNew: gasPrice,
+          gasDelta: gasPrice != null && gasOld != null ? gasPrice - gasOld : null,
+          dslOld,
+          dslNew: dslPrice,
+          dslDelta: dslPrice != null && dslOld != null ? dslPrice - dslOld : null,
+          failed: false,
+        });
       } else {
         notUpdated.push(`${station.name} (${station.opinet_id})`);
+        report.push({
+          name: station.name,
+          gasOld,
+          gasNew: null,
+          gasDelta: null,
+          dslOld,
+          dslNew: null,
+          dslDelta: null,
+          failed: true,
+        });
       }
     }
 
-    console.log(`\n가격 갱신 완료: ${updated}개 성공`);
+    console.log(`\n가격 갱신 완료: ${updated}개 성공, ${notUpdated.length}개 실패`);
+
+    // GitHub Step Summary 또는 콘솔에 리포트 출력
+    const changedCount = report.filter(
+      (r) => !r.failed && ((r.gasDelta != null && r.gasDelta !== 0) || (r.dslDelta != null && r.dslDelta !== 0))
+    ).length;
+
+    const kst = new Date(Date.now() + 9 * 60 * 60 * 1000)
+      .toISOString()
+      .replace("T", " ")
+      .slice(0, 16);
+
+    const fmt = (v: number | null) =>
+      v != null ? v.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : "-";
+    const fmtDelta = (d: number | null) => {
+      if (d == null) return "-";
+      if (d === 0) return "0";
+      return d > 0 ? `+${d}` : `${d}`;
+    };
+
+    const lines: string[] = [];
+    lines.push(`## ⛽ 유가 갱신 리포트`);
+    lines.push(`**${kst} KST** | 총 ${stations.length}개 중 **${updated}개 성공**, ${notUpdated.length}개 실패, 가격 변동 ${changedCount}건`);
+    lines.push("");
+    lines.push("| 주유소 | 휘발유(전) | 휘발유(후) | 변동 | 경유(전) | 경유(후) | 변동 |");
+    lines.push("|--------|-----------|-----------|:----:|---------|---------|:----:|");
+
+    const sorted = [...report].sort((a, b) => a.name.localeCompare(b.name));
+    for (const r of sorted) {
+      lines.push(`| ${r.name} | ${fmt(r.gasOld)} | ${fmt(r.gasNew)} | ${fmtDelta(r.gasDelta)} | ${fmt(r.dslOld)} | ${fmt(r.dslNew)} | ${fmtDelta(r.dslDelta)} |`);
+    }
+
     if (notUpdated.length > 0) {
-      console.log(`\n가격 미수집 (opinet_id 있으나 aroundAll에 없음) ${notUpdated.length}개:`);
-      notUpdated.forEach((s, i) => console.log(`  ${i + 1}. ${s}`));
+      lines.push("");
+      lines.push("### ❌ 갱신 실패");
+      notUpdated.forEach((s) => lines.push(`- ${s}`));
+    }
+
+    const summaryContent = lines.join("\n") + "\n";
+    const summaryPath = process.env.GITHUB_STEP_SUMMARY;
+    if (summaryPath) {
+      appendFileSync(summaryPath, summaryContent);
+    } else {
+      console.log(summaryContent);
     }
   } finally {
     await client.close();
