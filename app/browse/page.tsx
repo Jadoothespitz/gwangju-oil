@@ -107,7 +107,7 @@ export default function BrowsePage() {
         {showFallbackToast && (
           <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-50 animate-fade-out">
             <div className="bg-black/60 text-white text-sm px-4 py-2 rounded-lg whitespace-nowrap">
-              기본 위치를 광주시청으로 설정했습니다
+              기본 위치를 광주광역시청으로 설정했다요
             </div>
           </div>
         )}
