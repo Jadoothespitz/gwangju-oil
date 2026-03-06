@@ -20,7 +20,7 @@ function getNavUrls(station: StationWithDistance) {
   return {
     kakao: `https://map.kakao.com/link/to/${name},${lat},${lng}`,
     naver: `https://map.naver.com/p/directions/-/-/${lng},${lat},${name}/-/car`,
-    tmap: `https://tmap.life/navigate?goalx=${lng}&goaly=${lat}&goalname=${name}`,
+    tmap: `tmap://route?goalx=${lng}&goaly=${lat}&goalname=${name}`,
   };
 }
 
