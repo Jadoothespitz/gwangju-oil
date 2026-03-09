@@ -28,3 +28,9 @@ jobs:
           MONGODB_URI: ${{ secrets.MONGODB_URI }}
           OPINET_API_KEY: ${{ secrets.OPINET_API_KEY }}
         run: npm run prices:refresh
+
+      - name: 평균 유가 스냅샷
+        env:
+          MONGODB_URI: ${{ secrets.MONGODB_URI }}
+          OPINET_API_KEY: ${{ secrets.OPINET_API_KEY }}
+        run: npm run prices:snapshot

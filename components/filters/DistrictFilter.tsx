@@ -2,44 +2,31 @@
 
 import type { District } from "@/types";
 import { DISTRICTS } from "@/types";
-import { cn } from "@/lib/utils/cn";
+
+type DistrictValue = District | "nearby" | "";
 
 interface DistrictFilterProps {
-  selected: District | null;
-  onChange: (district: District | null) => void;
+  selected: District | "nearby" | null;
+  onChange: (district: District | "nearby" | null) => void;
 }
 
-export default function DistrictFilter({
-  selected,
-  onChange,
-}: DistrictFilterProps) {
+export default function DistrictFilter({ selected, onChange }: DistrictFilterProps) {
+  const value: DistrictValue = selected ?? "";
+
   return (
-    <div className="flex gap-1.5 overflow-x-auto scrollbar-none">
-      <button
-        className={cn(
-          "px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors",
-          !selected
-            ? "bg-blue-600 text-white"
-            : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-        )}
-        onClick={() => onChange(null)}
-      >
-        전체
-      </button>
+    <select
+      value={value}
+      onChange={(e) => {
+        const v = e.target.value as DistrictValue;
+        onChange(v === "" ? null : v);
+      }}
+      className="h-9 px-2 text-sm border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+    >
+      <option value="nearby">내 주변</option>
+      <option value="">구 전체</option>
       {DISTRICTS.map((d) => (
-        <button
-          key={d}
-          className={cn(
-            "px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors",
-            selected === d
-              ? "bg-blue-600 text-white"
-              : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-          )}
-          onClick={() => onChange(d)}
-        >
-          {d}
-        </button>
+        <option key={d} value={d}>{d}</option>
       ))}
-    </div>
+    </select>
   );
 }

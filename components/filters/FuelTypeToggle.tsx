@@ -1,41 +1,21 @@
 "use client";
 
 import type { FuelType } from "@/types";
-import { cn } from "@/lib/utils/cn";
 
 interface FuelTypeToggleProps {
   value: FuelType;
   onChange: (type: FuelType) => void;
 }
 
-export default function FuelTypeToggle({
-  value,
-  onChange,
-}: FuelTypeToggleProps) {
+export default function FuelTypeToggle({ value, onChange }: FuelTypeToggleProps) {
   return (
-    <div className="inline-flex rounded-lg bg-gray-100 p-0.5">
-      <button
-        className={cn(
-          "px-3 py-1 rounded-md text-xs font-medium transition-colors",
-          value === "gasoline"
-            ? "bg-white text-blue-700 shadow-sm"
-            : "text-gray-500 hover:text-gray-700"
-        )}
-        onClick={() => onChange("gasoline")}
-      >
-        휘발유
-      </button>
-      <button
-        className={cn(
-          "px-3 py-1 rounded-md text-xs font-medium transition-colors",
-          value === "diesel"
-            ? "bg-white text-blue-700 shadow-sm"
-            : "text-gray-500 hover:text-gray-700"
-        )}
-        onClick={() => onChange("diesel")}
-      >
-        경유
-      </button>
-    </div>
+    <select
+      value={value}
+      onChange={(e) => onChange(e.target.value as FuelType)}
+      className="h-9 px-2 text-sm border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+    >
+      <option value="gasoline">휘발유</option>
+      <option value="diesel">경유</option>
+    </select>
   );
 }

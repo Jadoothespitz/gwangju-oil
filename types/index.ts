@@ -54,6 +54,7 @@ export interface StationListQuery {
   dong?: string;
   fuelType: FuelType;
   sortBy: SortBy;
+  brand?: string;
   sangsaengOnly?: boolean;
   lat?: number;
   lng?: number;
@@ -94,9 +95,10 @@ export interface OpinetStation {
 export const BRAND_NAMES: Record<string, string> = {
   SKE: "SK에너지",
   GSC: "GS칼텍스",
-  HDO: "현대오일뱅크",
+  HDO: "HD현대오일뱅크",
   SOL: "S-OIL",
   RTO: "자영",
+  ALT: "알뜰주유소",
   ETC: "기타",
   E1G: "E1",
   SKG: "SK가스",

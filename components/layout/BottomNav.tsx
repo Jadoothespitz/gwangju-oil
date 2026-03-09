@@ -5,8 +5,8 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils/cn";
 
 const NAV_ITEMS = [
+  { href: "/home", label: "홈", icon: HomeIcon },
   { href: "/browse", label: "탐색", icon: SearchIcon },
-  { href: "/nearby", label: "내 주변", icon: LocationIcon },
   { href: "/favorites", label: "즐겨찾기", icon: HeartIcon },
 ];
 
@@ -39,6 +39,24 @@ export default function BottomNav() {
   );
 }
 
+function HomeIcon({ active }: { active: boolean }) {
+  return (
+    <svg
+      className="w-5 h-5"
+      fill={active ? "currentColor" : "none"}
+      stroke="currentColor"
+      strokeWidth={2}
+      viewBox="0 0 24 24"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+      />
+    </svg>
+  );
+}
+
 function SearchIcon({ active }: { active: boolean }) {
   return (
     <svg
@@ -50,21 +68,6 @@ function SearchIcon({ active }: { active: boolean }) {
     >
       <circle cx="11" cy="11" r="8" />
       <path d="m21 21-4.3-4.3" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-function LocationIcon({ active }: { active: boolean }) {
-  return (
-    <svg
-      className="w-5 h-5"
-      fill={active ? "currentColor" : "none"}
-      stroke="currentColor"
-      strokeWidth={2}
-      viewBox="0 0 24 24"
-    >
-      <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
-      {!active && <circle cx="12" cy="9" r="2.5" />}
     </svg>
   );
 }

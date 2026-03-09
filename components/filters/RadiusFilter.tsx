@@ -1,7 +1,5 @@
 "use client";
 
-import { cn } from "@/lib/utils/cn";
-
 const RADIUS_OPTIONS = [
   { value: 1000, label: "1km" },
   { value: 3000, label: "3km" },
@@ -14,26 +12,16 @@ interface RadiusFilterProps {
   onChange: (radius: number) => void;
 }
 
-export default function RadiusFilter({
-  value,
-  onChange,
-}: RadiusFilterProps) {
+export default function RadiusFilter({ value, onChange }: RadiusFilterProps) {
   return (
-    <div className="flex gap-1.5">
-      {RADIUS_OPTIONS.map((option) => (
-        <button
-          key={option.value}
-          className={cn(
-            "px-3 py-1.5 rounded-full text-xs font-medium transition-colors",
-            value === option.value
-              ? "bg-blue-600 text-white"
-              : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-          )}
-          onClick={() => onChange(option.value)}
-        >
-          {option.label}
-        </button>
+    <select
+      value={value}
+      onChange={(e) => onChange(Number(e.target.value))}
+      className="h-9 px-2 text-sm border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+    >
+      {RADIUS_OPTIONS.map((opt) => (
+        <option key={opt.value} value={opt.value}>{opt.label}</option>
       ))}
-    </div>
+    </select>
   );
 }

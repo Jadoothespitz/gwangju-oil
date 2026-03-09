@@ -11,7 +11,10 @@
     "seed:download": "tsx scripts/downloadSangsaeng.ts",
     "seed:geocode": "tsx scripts/geocodeSangsaeng.ts",
 "opinet:link": "tsx scripts/linkOpinet.ts",
-    "prices:refresh": "tsx scripts/refreshPrices.ts"
+    "prices:refresh": "tsx scripts/refreshPrices.ts",
+    "prices:snapshot": "tsx scripts/snapshotAvgPrice.ts",
+    "fix:brands": "tsx scripts/fixBrandNames.ts",
+    "fix:stationdata": "tsx scripts/fixStationData.ts"
   },
   "dependencies": {
     "clsx": "^2.1.1",

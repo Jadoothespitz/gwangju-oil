@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { findStations, findStationsByIds } from "@/lib/db/queries/stationQueries";
+import { findStations, findNearbyStations, findStationsByIds } from "@/lib/db/queries/stationQueries";
 import type { District, FuelType, SortBy } from "@/types";
-import { DISTRICTS } from "@/types";
+import { DISTRICTS, BRAND_NAMES } from "@/types";
 import { isRateLimited, getClientIp } from "@/lib/api/rateLimit";
 
 export async function GET(request: NextRequest) {
@@ -25,10 +25,12 @@ export async function GET(request: NextRequest) {
     const dong = params.get("dong");
     const fuelType = (params.get("fuelType") || "gasoline") as FuelType;
     const sortBy = (params.get("sortBy") || "price") as SortBy;
+    const brand = params.get("brand") || undefined;
     const page = Math.max(1, parseInt(params.get("page") || "1"));
     const limit = Math.min(100, Math.max(1, parseInt(params.get("limit") || "50")));
     const lat = params.get("lat") ? parseFloat(params.get("lat")!) : undefined;
     const lng = params.get("lng") ? parseFloat(params.get("lng")!) : undefined;
+    const radius = params.get("radius") ? parseInt(params.get("radius")!) : undefined;
 
     // 유효성 검사
     if (district && !DISTRICTS.includes(district)) {
@@ -45,12 +47,34 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    if (brand && !Object.keys(BRAND_NAMES).includes(brand)) {
+      return NextResponse.json(
+        { error: "유효하지 않은 정유사 코드입니다." },
+        { status: 400 }
+      );
+    }
+
+    // radius + lat + lng → nearby 쿼리
+    if (radius != null && lat != null && lng != null) {
+      const stations = await findNearbyStations({
+        lat,
+        lng,
+        radius,
+        fuelType,
+        sortBy,
+        brand,
+        limit,
+      });
+      return NextResponse.json({ stations, total: stations.length, page: 1, limit });
+    }
+
     const { stations, total } = await findStations({
       district: district || undefined,
       area: area || undefined,
       dong: dong || undefined,
       fuelType,
       sortBy,
+      brand,
       lat,
       lng,
       page,

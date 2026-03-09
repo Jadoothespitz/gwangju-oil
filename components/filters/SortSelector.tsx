@@ -1,7 +1,6 @@
 "use client";
 
 import type { SortBy } from "@/types";
-import { cn } from "@/lib/utils/cn";
 
 interface SortSelectorProps {
   value: SortBy;
@@ -9,33 +8,27 @@ interface SortSelectorProps {
   showDistance?: boolean;
 }
 
-export default function SortSelector({
-  value,
-  onChange,
-  showDistance = true,
-}: SortSelectorProps) {
+export default function SortSelector({ value, onChange, showDistance = true }: SortSelectorProps) {
   return (
-    <div className="inline-flex rounded-lg bg-gray-100 p-0.5">
+    <div className="flex gap-1.5">
       <button
-        className={cn(
-          "px-3 py-1 rounded-md text-xs font-medium transition-colors",
-          value === "price"
-            ? "bg-white text-blue-700 shadow-sm"
-            : "text-gray-500 hover:text-gray-700"
-        )}
         onClick={() => onChange("price")}
+        className={`px-3 py-1.5 text-xs font-medium rounded-full transition-colors ${
+          value === "price"
+            ? "bg-blue-600 text-white"
+            : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+        }`}
       >
         가격순
       </button>
       {showDistance && (
         <button
-          className={cn(
-            "px-3 py-1 rounded-md text-xs font-medium transition-colors",
-            value === "distance"
-              ? "bg-white text-blue-700 shadow-sm"
-              : "text-gray-500 hover:text-gray-700"
-          )}
           onClick={() => onChange("distance")}
+          className={`px-3 py-1.5 text-xs font-medium rounded-full transition-colors ${
+            value === "distance"
+              ? "bg-blue-600 text-white"
+              : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+          }`}
         >
           거리순
         </button>

@@ -24,13 +24,14 @@ function getNavUrls(station: StationWithDistance) {
   };
 }
 
-const BRAND_COLORS: Record<string, string> = {
-  SKE: "bg-red-100 text-red-700",
-  GSC: "bg-blue-100 text-blue-700",
-  HDO: "bg-orange-100 text-orange-700",
-  SOL: "bg-yellow-100 text-yellow-700",
-  RTO: "bg-gray-100 text-gray-700",
-  ETC: "bg-gray-100 text-gray-700",
+const BRAND_STYLES: Record<string, { background: string; color: string }> = {
+  SKE: { background: "#FFE5E9", color: "#EA002C" },   // SK에너지 Red
+  GSC: { background: "#003087", color: "#00FF7F" },   // GS칼텍스 Blue bg + Bright Green text
+  HDO: { background: "#00A86B", color: "#004B9B" },   // HD현대오일뱅크 Green bg + Blue text
+  SOL: { background: "#FFF8D6", color: "#005F28" },   // S-OIL Yellow bg + Green text
+  ALT: { background: "#FFF0E5", color: "#F06400" },   // 알뜰주유소 Orange
+  RTO: { background: "#F3F4F6", color: "#6B7280" },   // 자영
+  ETC: { background: "#F3F4F6", color: "#6B7280" },   // 기타
 };
 
 export default function StationCard({
@@ -66,7 +67,13 @@ export default function StationCard({
       ? station.prices.gasoline
       : station.prices.diesel;
 
-  const brandColor = BRAND_COLORS[station.brand] || BRAND_COLORS.ETC;
+  const brandStyle = BRAND_STYLES[station.brand] || BRAND_STYLES.ETC;
+
+  // 가격 갱신 경과일 계산 (2일 이상이면 stale)
+  const staleDays = station.prices.updatedAt
+    ? Math.floor((Date.now() - new Date(station.prices.updatedAt).getTime()) / 86_400_000)
+    : null;
+  const isStale = staleDays != null && staleDays >= 2;
 
   return (
     <div
@@ -83,10 +90,8 @@ export default function StationCard({
           {/* 브랜드 + 주유소명 */}
           <div className="flex items-center gap-1.5 mb-1">
             <span
-              className={cn(
-                "text-[10px] font-semibold px-1.5 py-0.5 rounded",
-                brandColor
-              )}
+              className="text-[10px] font-semibold px-1.5 py-0.5 rounded"
+              style={brandStyle}
             >
               {station.brandName}
             </span>
@@ -147,6 +152,11 @@ export default function StationCard({
               </div>
             )}
           </div>
+          {isStale && (
+            <p className="text-[10px] font-medium text-amber-600 mt-1">
+              ⚠ {staleDays}일 전 가격 정보 (갱신 실패)
+            </p>
+          )}
         </div>
 
         {/* 즐겨찾기 + 길찾기 + 상생카드 */}

@@ -9,6 +9,7 @@ interface FindStationsOptions {
   dong?: string;
   fuelType: FuelType;
   sortBy: SortBy;
+  brand?: string;
   sangsaengOnly?: boolean;
   lat?: number;
   lng?: number;
@@ -38,6 +39,9 @@ export async function findStations(
   if (options.dong) {
     matchFilter.dong = options.dong;
   }
+  if (options.brand) {
+    matchFilter.brand = options.brand;
+  }
 
   const priceField =
     options.fuelType === "diesel" ? "prices.diesel" : "prices.gasoline";
@@ -57,7 +61,6 @@ export async function findStations(
           query: matchFilter,
         },
       },
-      // distance는 $geoNear가 이미 거리순 정렬
       {
         $facet: {
           stations: [{ $skip: skip }, { $limit: options.limit }],
@@ -129,6 +132,7 @@ export async function findNearbyStations(options: {
   radius: number;
   fuelType: FuelType;
   sortBy: SortBy;
+  brand?: string;
   sangsaengOnly?: boolean;
   limit: number;
 }): Promise<StationWithDistance[]> {
@@ -142,6 +146,9 @@ export async function findNearbyStations(options: {
 
   if (options.sangsaengOnly !== false) {
     matchStage["sangsaeng.matched"] = true;
+  }
+  if (options.brand) {
+    matchStage.brand = options.brand;
   }
 
   const pipeline: Document[] = [
@@ -162,7 +169,6 @@ export async function findNearbyStations(options: {
   if (options.sortBy === "price") {
     pipeline.push({ $sort: { [priceField]: 1 } });
   }
-  // distance는 $geoNear가 이미 거리순으로 정렬
 
   pipeline.push({ $limit: options.limit });
 

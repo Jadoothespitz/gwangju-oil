@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useEffect, useRef } from "react";
 import dynamic from "next/dynamic";
+import useSWR from "swr";
 import type { District, FuelType, SortBy } from "@/types";
 import { useStations } from "@/lib/hooks/useStations";
 import { useFavorites } from "@/lib/hooks/useFavorites";
@@ -12,6 +13,8 @@ import StationList from "@/components/station/StationList";
 import DistrictFilter from "@/components/filters/DistrictFilter";
 import FuelTypeToggle from "@/components/filters/FuelTypeToggle";
 import SortSelector from "@/components/filters/SortSelector";
+import BrandFilter from "@/components/filters/BrandFilter";
+import RadiusFilter from "@/components/filters/RadiusFilter";
 import { DISTRICT_INFO } from "@/lib/gwangju/districts";
 import { cn } from "@/lib/utils/cn";
 
@@ -24,41 +27,60 @@ const KakaoMap = dynamic(() => import("@/components/map/KakaoMap"), {
   ),
 });
 
+type DistrictOrNearby = District | "nearby" | null;
+
 export default function BrowsePage() {
-  const [district, setDistrict] = useState<District | null>(null);
-  const [fuelType, setFuelType] = useState<FuelType>("gasoline");
+  const [district, setDistrict] = useState<DistrictOrNearby>(null);
+  const [radius, setRadius] = useState(3000);
+  const [fuelType, setFuelType] = useState<FuelType>(() => {
+    if (typeof window === "undefined") return "gasoline";
+    const saved = localStorage.getItem("preferredFuelType");
+    return saved === "diesel" ? "diesel" : "gasoline";
+  });
   const [sortBy, setSortBy] = useState<SortBy>("price");
+  const [brand, setBrand] = useState<string | null>(null);
   const [selectedStationId, setSelectedStationId] = useState<string | null>(null);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const searchInputRef = useRef<HTMLInputElement>(null);
 
-  const { lat, lng, isFallback } = useGeolocation();
+  const { lat, lng, isFallback, loading: locationLoading } = useGeolocation();
   const { favoriteIds, toggleFavorite } = useFavorites();
   const [showFallbackToast, setShowFallbackToast] = useState(false);
 
+  const isNearby = district === "nearby";
+
   useEffect(() => {
-    if (isFallback) {
+    if (isFallback && isNearby) {
       setShowFallbackToast(true);
       const timer = setTimeout(() => setShowFallbackToast(false), 3000);
       return () => clearTimeout(timer);
     }
-  }, [isFallback]);
+  }, [isFallback, isNearby]);
+
+  const { data: brandsData } = useSWR<{ brands: string[] }>(
+    "/api/stations/brands",
+    (url: string) => fetch(url).then((r) => r.json()),
+    { revalidateOnFocus: false, dedupingInterval: 86400_000 }
+  );
 
   const { stations, isLoading } = useStations({
-    district: district || undefined,
+    district: isNearby ? undefined : (district ?? undefined),
     fuelType,
     sortBy,
+    brand,
     lat,
     lng,
+    radius: isNearby ? radius : undefined,
   });
 
   const favoriteSet = useMemo(() => new Set(favoriteIds), [favoriteIds]);
 
   const mapCenter = useMemo(() => {
-    if (district) return DISTRICT_INFO[district].center;
+    if (isNearby && lat && lng) return { lat, lng };
+    if (district && district !== "nearby") return DISTRICT_INFO[district].center;
     return undefined;
-  }, [district]);
+  }, [district, isNearby, lat, lng]);
 
   const mapLevel = useMemo(() => {
     if (district) return 6;
@@ -71,10 +93,20 @@ export default function BrowsePage() {
     return stations.filter((s) => s.name.toLowerCase().includes(q));
   }, [stations, searchQuery]);
 
-  const handleDistrictChange = (d: District | null) => {
+  const handleDistrictChange = (d: District | "nearby" | null) => {
     setDistrict(d);
     setSelectedStationId(null);
     setSearchQuery("");
+    if (d === "nearby") {
+      setSortBy("distance");
+    } else if (sortBy === "distance") {
+      setSortBy("price");
+    }
+  };
+
+  const handleFuelTypeChange = (type: FuelType) => {
+    setFuelType(type);
+    localStorage.setItem("preferredFuelType", type);
   };
 
   const handleSearchToggle = () => {
@@ -113,13 +145,25 @@ export default function BrowsePage() {
         )}
       </div>
 
+      {/* 위치 로딩 상태 (내 주변 모드) */}
+      {isNearby && locationLoading && (
+        <div className="bg-white border-b border-gray-200 px-3 py-2">
+          <p className="text-xs text-blue-600 flex items-center gap-1">
+            <span className="w-3 h-3 border-2 border-blue-600 border-t-transparent rounded-full animate-spin inline-block" />
+            위치를 가져오는 중...
+          </p>
+        </div>
+      )}
+
       {/* 필터 영역 */}
       <div className="bg-white border-b border-gray-200 px-3 py-2.5 space-y-2 shrink-0">
-        {/* 구 필터 + 검색 버튼 */}
+        {/* Row 1: 구 + 반경(nearby 전용) + 검색 */}
         <div className="flex items-center gap-2">
-          <div className="flex-1 min-w-0">
-            <DistrictFilter selected={district} onChange={handleDistrictChange} />
-          </div>
+          <DistrictFilter selected={district} onChange={handleDistrictChange} />
+          {isNearby && (
+            <RadiusFilter value={radius} onChange={setRadius} />
+          )}
+          <div className="flex-1" />
           <button
             onClick={handleSearchToggle}
             className={cn(
@@ -159,9 +203,11 @@ export default function BrowsePage() {
           </div>
         )}
 
-        {/* 유종 + 정렬 */}
-        <div className="flex items-center justify-between">
-          <FuelTypeToggle value={fuelType} onChange={setFuelType} />
+        {/* Row 2: 유종 + 정유사 + 정렬 */}
+        <div className="flex items-center gap-2">
+          <FuelTypeToggle value={fuelType} onChange={handleFuelTypeChange} />
+          <BrandFilter value={brand} onChange={setBrand} availableBrands={brandsData?.brands} />
+          <div className="flex-1" />
           <SortSelector
             value={sortBy}
             onChange={setSortBy}
@@ -177,7 +223,7 @@ export default function BrowsePage() {
           fuelType={fuelType}
           favoriteIds={favoriteSet}
           selectedStationId={selectedStationId}
-          isLoading={isLoading}
+          isLoading={isLoading || (isNearby && locationLoading)}
           onFavoriteToggle={toggleFavorite}
           onStationSelect={setSelectedStationId}
         />
