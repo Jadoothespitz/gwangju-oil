@@ -56,12 +56,12 @@ async function main() {
     const res = await fetch(url);
     const data = await res.json();
     const d = data.RESULT?.OIL?.[0];
-    if (d && d.POLL_DIV_CD === "HDO") {
+    if (d && d.POLL_DIV_CO === "HDO") {
       hdoStations.push({
         id: d.UNI_ID,
         name: d.OS_NM,
         addr: d.NEW_ADR || d.VAN_ADR,
-        pollDiv: d.POLL_DIV_CD,
+        pollDiv: d.POLL_DIV_CO,
       });
     }
     count++;

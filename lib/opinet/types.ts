@@ -9,7 +9,7 @@ export interface OpinetDetailResponse {
 export interface OpinetStationDetail {
   UNI_ID: string;
   OS_NM: string;
-  POLL_DIV_CD: string;
+  POLL_DIV_CO: string;
   SIGUNCD: string;
   NEW_ADR: string;
   VAN_ADR: string;

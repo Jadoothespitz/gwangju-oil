@@ -11,7 +11,8 @@ import * as dns from "dns";
 import * as path from "path";
 import { config } from "dotenv";
 import { MongoClient } from "mongodb";
-import type { OpinetStation, SangsaengMerchant, BRAND_NAMES } from "../types";
+import type { OpinetStation, SangsaengMerchant } from "../types";
+import { BRAND_NAMES } from "../types";
 import type { OpinetStationDetail } from "../lib/opinet/types";
 import { matchStations } from "../lib/matching/matcher";
 import { wgs84ToKatec, katecToWgs84 } from "../lib/geo/coordinateConverter";
@@ -94,7 +95,7 @@ async function fetchAllOpinetStations(): Promise<{
         stations.push({
           UNI_ID: detail.UNI_ID,
           OS_NM: detail.OS_NM,
-          POLL_DIV_CD: detail.POLL_DIV_CD,
+          POLL_DIV_CD: detail.POLL_DIV_CO,
           NEW_ADR: detail.NEW_ADR,
           VAN_ADR: detail.VAN_ADR,
           TEL: detail.TEL,
@@ -228,6 +229,7 @@ async function main() {
           $set: {
             opinet_id: match.opinet.UNI_ID,
             brand: match.opinet.POLL_DIV_CD,
+            brandName: BRAND_NAMES[match.opinet.POLL_DIV_CD] || match.opinet.POLL_DIV_CD,
             "sangsaeng.matchScore": match.score,
             "sangsaeng.matchMethod": match.method,
             ...(prices.gasoline != null && { "prices.gasoline": prices.gasoline }),
