@@ -143,13 +143,22 @@ export default function HomePage() {
           </div>
 
           {/* 푸터 */}
-          <footer className="pt-2 pb-1 text-center space-y-1">
+          <footer className="pt-2 pb-1 text-center space-y-1.5">
             <p className="text-[11px] text-gray-400">
-              광주광역시 상생카드 가맹 주유소 유가 비교
+              비공식 서비스이며, 가격 정보의 정확성을 보장하지 않습니다.
             </p>
             <p className="text-[11px] text-gray-400">
-              가격 정보 출처: 오피넷 · 상생카드 가맹점 정보는 광주광역시 제공
+              가격: 오피넷 · 지도: 카카오 · 가맹점: 공공데이터포털
             </p>
+            <p className="text-[10px] text-gray-300">
+              각 정유사 브랜드명은 해당 기업의 등록상표입니다.
+            </p>
+            <Link
+              href="/privacy"
+              className="inline-block text-[11px] text-gray-400 underline hover:text-gray-500"
+            >
+              개인정보처리방침
+            </Link>
           </footer>
 
         </div>
