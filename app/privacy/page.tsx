@@ -90,16 +90,16 @@ export default function PrivacyPage() {
           <section>
             <h2 className="font-semibold text-gray-900 mb-1">5. 문의</h2>
             <p>
-              본 서비스에 대한 문의는{" "}
+              본 서비스에 대한 문의나 의견은{" "}
               <a
-                href="https://github.com/Jadoothespitz/gwangju-oil/issues"
+                href="https://docs.google.com/forms/d/e/1FAIpQLSfkrHOkpLBrjh40E_J584whovB9kGM4ySqmUu2R7KM6Y8ODcA/viewform?usp=header"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-blue-600 underline"
               >
-                GitHub Issues
+                의견 보내기 폼
               </a>
-              를 통해 보내주세요.
+              을 이용해 주세요.
             </p>
           </section>
         </div>
