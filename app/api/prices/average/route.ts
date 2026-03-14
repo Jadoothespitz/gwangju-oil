@@ -15,10 +15,11 @@ export async function GET() {
     const gjGas  = get("광주", "B027");
     const gjDie  = get("광주", "D047");
 
-    // 어제 스냅샷에서 전일 가격 조회 → 직접 diff 계산
-    const yesterday = new Date(Date.now() + 9 * 60 * 60 * 1000 - 24 * 60 * 60 * 1000)
+    // 오늘 이전 가장 최근 스냅샷에서 전일 가격 조회 → 직접 diff 계산
+    const today = new Date(Date.now() + 9 * 60 * 60 * 1000)
       .toISOString().slice(0, 10).replace(/-/g, "");
-    const snapshot = await db.collection("avg_price_snapshot").findOne({ date: yesterday });
+    const snapshot = await db.collection("avg_price_snapshot")
+      .findOne({ date: { $lt: today } }, { sort: { date: -1 } });
 
     const calcDiff = (todayPrice: number | undefined, prevPrice: unknown) => {
       if (todayPrice == null || typeof prevPrice !== "number") return null;
