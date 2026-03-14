@@ -15,11 +15,10 @@ export async function GET() {
     const gjGas  = get("광주", "B027");
     const gjDie  = get("광주", "D047");
 
-    // 스냅샷에서 전일 가격 조회 → 직접 diff 계산
-    const snapshot = await db.collection("avg_price_snapshot").findOne({ key: "daily" });
-    const today = new Date(Date.now() + 9 * 60 * 60 * 1000)
+    // 어제 스냅샷에서 전일 가격 조회 → 직접 diff 계산
+    const yesterday = new Date(Date.now() + 9 * 60 * 60 * 1000 - 24 * 60 * 60 * 1000)
       .toISOString().slice(0, 10).replace(/-/g, "");
-    const hasPrev = snapshot?.prev_date != null && snapshot.date === today;
+    const snapshot = await db.collection("avg_price_snapshot").findOne({ date: yesterday });
 
     const calcDiff = (todayPrice: number | undefined, prevPrice: unknown) => {
       if (todayPrice == null || typeof prevPrice !== "number") return null;
@@ -31,21 +30,21 @@ export async function GET() {
         national: {
           gasoline: {
             price: natGas?.PRICE ?? null,
-            diff: hasPrev ? calcDiff(natGas?.PRICE, snapshot.prev_national_gasoline) : null,
+            diff: calcDiff(natGas?.PRICE, snapshot?.national_gasoline),
           },
           diesel: {
             price: natDie?.PRICE ?? null,
-            diff: hasPrev ? calcDiff(natDie?.PRICE, snapshot.prev_national_diesel) : null,
+            diff: calcDiff(natDie?.PRICE, snapshot?.national_diesel),
           },
         },
         gwangju: {
           gasoline: {
             price: gjGas?.PRICE ?? null,
-            diff: hasPrev ? calcDiff(gjGas?.PRICE, snapshot.prev_gwangju_gasoline) : null,
+            diff: calcDiff(gjGas?.PRICE, snapshot?.gwangju_gasoline),
           },
           diesel: {
             price: gjDie?.PRICE ?? null,
-            diff: hasPrev ? calcDiff(gjDie?.PRICE, snapshot.prev_gwangju_diesel) : null,
+            diff: calcDiff(gjDie?.PRICE, snapshot?.gwangju_diesel),
           },
         },
         date: natGas?.DATE ?? null,

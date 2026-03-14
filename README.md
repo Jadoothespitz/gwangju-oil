@@ -1,6 +1,6 @@
 # 광주 주유소 가격비교 ⛽
 
-광주광역시 상생카드 가맹 주유소의 실시간 유가를 비교하는 웹 서비스입니다.
+광주광역시 상생카드·온누리상품권 가맹 주유소의 실시간 유가를 비교하는 웹 서비스입니다.
 
 > **[gwangju-oil.vercel.app](https://gwangju-oil.vercel.app)**
 
@@ -16,6 +16,7 @@
 
 - **오늘의 유가** — 전국/광주 평균 유가 비교, 전일 대비 등락 표시
 - **주유소 탐색** — 광주 5개 구별 필터링, 정유사 필터, 휘발유/경유 전환, 가격순/거리순 정렬
+- **상품권 필터** — 상품권 전체 / 광주상생카드 / 온누리상품권 가맹점 별도 조회
 - **내 주변 주유소** — GPS 기반 반경 검색 (1~10km), 탐색 탭에 통합
 - **즐겨찾기** — 자주 가는 주유소 저장 (브라우저 로컬 저장)
 - **실시간 유가** — 오피넷 API 연동, 주기적 가격 갱신
@@ -33,6 +34,7 @@
 | **데이터베이스** | MongoDB Atlas (2dsphere 지리공간 인덱스) |
 | **지도** | Kakao Maps SDK |
 | **배포** | Vercel |
+| **데이터 전처리** | Python (pandas) |
 
 ## 데이터 소스
 
@@ -41,6 +43,7 @@
 | [오피넷 API](https://www.opinet.co.kr) | 실시간 주유소 유가 정보 |
 | [카카오 개발자](https://developers.kakao.com) | 지도 표시 및 주소 → 좌표 변환 |
 | [공공데이터포털](https://www.data.go.kr) | 상생카드 가맹점 목록 |
+| [공공데이터포털 온누리상품권 가맹점](https://www.data.go.kr/data/3060079/fileData.do) | 온누리상품권 가맹 주유소 식별 |
 
 ## 시작하기
 
@@ -96,7 +99,10 @@ npm run dev
 | `npm run seed:download` | 상생카드 데이터 다운로드만 |
 | `npm run seed:geocode` | 주소 → 좌표 변환만 |
 | `npm run opinet:link` | 오피넷 주유소 매칭 + 초기 가격 수집 |
+| `npm run onnuri:link` | 온누리상품권 가맹 주유소 DB 마킹 |
+| `npm run onnuri:add` | 온누리 전용 주유소 (상생카드 미가맹) DB 추가 |
 | `npm run prices:refresh` | 가격 갱신 (주기적 실행용) |
+| `npm run prices:snapshot` | 전국/광주 평균 유가 스냅샷 저장 |
 
 ## 프로젝트 구조
 

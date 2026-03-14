@@ -221,7 +221,7 @@ export default function StationCard({
             )}
           </div>
           {station.sangsaeng.matched && (
-            <span className="text-[9px] font-bold text-purple-600 bg-purple-50 px-1.5 py-0.5 rounded whitespace-nowrap">
+            <span className="text-[9px] font-bold text-blue-900 bg-blue-100 px-1.5 py-0.5 rounded whitespace-nowrap">
               상생
             </span>
           )}

@@ -1,8 +1,8 @@
 /**
  * 전국/광주 평균 유가 스냅샷
  *
- * MongoDB avg_price_snapshot 컬렉션에 오늘 평균 유가를 저장한다.
- * 날짜가 바뀌면 현재 값을 prev로 이동 → 전일 대비 diff 계산 가능해짐.
+ * MongoDB avg_price_snapshot 컬렉션에 오늘 평균 유가를 날짜별로 저장한다.
+ * 365일보다 오래된 도큐먼트는 자동 삭제.
  *
  * 사용법: npm run prices:snapshot
  */
@@ -34,14 +34,23 @@ async function fetchAvgPrices() {
   };
 }
 
+function kstToday() {
+  return new Date(Date.now() + 9 * 60 * 60 * 1000)
+    .toISOString().slice(0, 10).replace(/-/g, "");
+}
+
+function kstYesterday() {
+  return new Date(Date.now() + 9 * 60 * 60 * 1000 - 24 * 60 * 60 * 1000)
+    .toISOString().slice(0, 10).replace(/-/g, "");
+}
+
 async function snapshotAvgPrice() {
   const mongoUri = process.env.MONGODB_URI;
   if (!mongoUri) { console.error("MONGODB_URI 환경 변수를 설정해주세요."); process.exit(1); }
   if (!API_KEY)  { console.error("OPINET_API_KEY 환경 변수를 설정해주세요."); process.exit(1); }
 
-  // 오늘 날짜 (KST, YYYYMMDD)
-  const today = new Date(Date.now() + 9 * 60 * 60 * 1000)
-    .toISOString().slice(0, 10).replace(/-/g, "");
+  const today = kstToday();
+  const yesterday = kstYesterday();
 
   const prices = await fetchAvgPrices();
   console.log(`오늘(${today}) 가격:`, prices);
@@ -51,47 +60,34 @@ async function snapshotAvgPrice() {
     await client.connect();
     const col = client.db("gwangju-oil").collection("avg_price_snapshot");
 
-    const existing = await col.findOne({ key: "daily" });
-    const isNewDay = !existing || existing.date !== today;
-
+    // 날짜별 upsert (같은 날 재실행 시 덮어쓰기)
     await col.updateOne(
-      { key: "daily" },
-      {
-        $set: {
-          key: "daily",
-          date: today,
-          national_gasoline: prices.national_gasoline,
-          national_diesel:   prices.national_diesel,
-          gwangju_gasoline:  prices.gwangju_gasoline,
-          gwangju_diesel:    prices.gwangju_diesel,
-          // 날짜가 바뀐 경우에만 prev 로테이션
-          ...(isNewDay && {
-            prev_date:               existing?.date                ?? null,
-            prev_national_gasoline:  existing?.national_gasoline   ?? null,
-            prev_national_diesel:    existing?.national_diesel      ?? null,
-            prev_gwangju_gasoline:   existing?.gwangju_gasoline     ?? null,
-            prev_gwangju_diesel:     existing?.gwangju_diesel       ?? null,
-          }),
-        },
-      },
+      { date: today },
+      { $set: { date: today, ...prices } },
       { upsert: true }
     );
 
-    if (isNewDay && existing) {
+    // 365일 이전 도큐먼트 삭제
+    const cutoff = new Date(Date.now() + 9 * 60 * 60 * 1000 - 365 * 24 * 60 * 60 * 1000)
+      .toISOString().slice(0, 10).replace(/-/g, "");
+    const { deletedCount } = await col.deleteMany({ date: { $lt: cutoff } });
+    if (deletedCount > 0) console.log(`만료된 스냅샷 ${deletedCount}건 삭제 (기준: ${cutoff})`);
+
+    // 전일 대비 diff 콘솔 출력
+    const prev = await col.findOne({ date: yesterday });
+    if (prev) {
       const fmtDiff = (a: number | null, b: number | null) => {
         if (a == null || b == null) return "-";
         const d = Math.round((b - a) * 10) / 10;
         return d > 0 ? `+${d}` : `${d}`;
       };
       console.log("전일 대비 등락:");
-      console.log(`  전국 휘발유: ${fmtDiff(existing.national_gasoline, prices.national_gasoline)}`);
-      console.log(`  전국 경유:   ${fmtDiff(existing.national_diesel,   prices.national_diesel)}`);
-      console.log(`  광주 휘발유: ${fmtDiff(existing.gwangju_gasoline,  prices.gwangju_gasoline)}`);
-      console.log(`  광주 경유:   ${fmtDiff(existing.gwangju_diesel,    prices.gwangju_diesel)}`);
-    } else if (!isNewDay) {
-      console.log("오늘 이미 실행됨 — 현재 가격만 업데이트 (prev 유지)");
+      console.log(`  전국 휘발유: ${fmtDiff(prev.national_gasoline, prices.national_gasoline)}`);
+      console.log(`  전국 경유:   ${fmtDiff(prev.national_diesel,   prices.national_diesel)}`);
+      console.log(`  광주 휘발유: ${fmtDiff(prev.gwangju_gasoline,  prices.gwangju_gasoline)}`);
+      console.log(`  광주 경유:   ${fmtDiff(prev.gwangju_diesel,    prices.gwangju_diesel)}`);
     } else {
-      console.log("첫 실행 — 내일부터 diff 표시 가능");
+      console.log("전일 데이터 없음 — 내일부터 diff 표시 가능");
     }
 
     console.log("\n스냅샷 저장 완료");
