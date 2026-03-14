@@ -3,10 +3,10 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "오매나! 광주 기름 싸다!",
-  description: "광주광역시 상생카드·온누리상품권 가맹 주유소 가격 비교 서비스",
+  description: "광주광역시 상생카드·온누리상품권 사용 가능한 최저가 주유소 찾기",
   openGraph: {
     title: "오매나! 광주 기름 싸다!",
-    description: "광주광역시 상생카드·온누리상품권 가맹 주유소 가격 비교 서비스",
+    description: "광주광역시 상생카드·온누리상품권 사용 가능한 최저가 주유소 찾기",
     url: "https://gwangju-oil.vercel.app",
     siteName: "오매나기름집",
     locale: "ko_KR",
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary",
     title: "오매나! 광주 기름 싸다!",
-    description: "광주광역시 상생카드·온누리상품권 가맹 주유소 가격 비교 서비스",
+    description: "광주광역시 상생카드·온누리상품권 사용 가능한 최저가 주유소 찾기",
   },
 };
 
