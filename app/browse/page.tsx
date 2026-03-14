@@ -4,19 +4,15 @@ import { useState, useMemo, useEffect, useRef } from "react";
 import dynamic from "next/dynamic";
 import useSWR from "swr";
 import type { District, FuelType, SortBy } from "@/types";
+import type { CardType } from "@/lib/db/queries/stationQueries";
 import { useStations } from "@/lib/hooks/useStations";
 import { useFavorites } from "@/lib/hooks/useFavorites";
 import { useGeolocation } from "@/lib/hooks/useGeolocation";
 import Header from "@/components/layout/Header";
 import BottomNav from "@/components/layout/BottomNav";
 import StationList from "@/components/station/StationList";
-import DistrictFilter from "@/components/filters/DistrictFilter";
-import FuelTypeToggle from "@/components/filters/FuelTypeToggle";
 import SortSelector from "@/components/filters/SortSelector";
-import BrandFilter from "@/components/filters/BrandFilter";
-import RadiusFilter from "@/components/filters/RadiusFilter";
-import CardTypeFilter from "@/components/filters/CardTypeFilter";
-import type { CardType } from "@/lib/db/queries/stationQueries";
+import FilterSheet from "@/components/filters/FilterSheet";
 import { DISTRICT_INFO } from "@/lib/gwangju/districts";
 import { cn } from "@/lib/utils/cn";
 
@@ -43,6 +39,7 @@ export default function BrowsePage() {
   const [brand, setBrand] = useState<string | null>(null);
   const [cardType, setCardType] = useState<CardType>("all");
   const [selectedStationId, setSelectedStationId] = useState<string | null>(null);
+  const [filterSheetOpen, setFilterSheetOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -160,14 +157,47 @@ export default function BrowsePage() {
       )}
 
       {/* 필터 영역 */}
-      <div className="bg-white border-b border-gray-200 px-3 py-2.5 space-y-2 shrink-0">
-        {/* Row 1: 구 + 반경(nearby 전용) + 검색 */}
+      <div className="bg-white border-b border-gray-200 px-3 py-2 shrink-0">
         <div className="flex items-center gap-2">
-          <DistrictFilter selected={district} onChange={handleDistrictChange} />
-          {isNearby && (
-            <RadiusFilter value={radius} onChange={setRadius} />
-          )}
+          {/* 필터 버튼 */}
+          {(() => {
+            const activeCount = [
+              district !== null,
+              cardType !== "all",
+              brand !== null,
+            ].filter(Boolean).length;
+            return (
+              <button
+                onClick={() => setFilterSheetOpen(true)}
+                className={cn(
+                  "flex items-center gap-1.5 h-9 px-3 text-sm border rounded-lg transition-colors shrink-0",
+                  activeCount > 0
+                    ? "border-blue-500 text-blue-600 bg-blue-50"
+                    : "border-gray-300 text-gray-600 bg-white"
+                )}
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 4h18M7 12h10M11 20h2" />
+                </svg>
+                필터
+                {activeCount > 0 && (
+                  <span className="w-4 h-4 text-[11px] font-bold bg-blue-600 text-white rounded-full flex items-center justify-center">
+                    {activeCount}
+                  </span>
+                )}
+              </button>
+            );
+          })()}
+
           <div className="flex-1" />
+
+          <SortSelector
+            value={sortBy}
+            onChange={setSortBy}
+            showDistance={!!(lat && lng)}
+          />
+
+          {/* 검색 버튼 */}
           <button
             onClick={handleSearchToggle}
             className={cn(
@@ -186,7 +216,7 @@ export default function BrowsePage() {
 
         {/* 검색 입력창 */}
         {searchOpen && (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 mt-2">
             <input
               ref={searchInputRef}
               type="text"
@@ -206,19 +236,6 @@ export default function BrowsePage() {
             </button>
           </div>
         )}
-
-        {/* Row 2: 유종 + 카드 + 정유사 + 정렬 */}
-        <div className="flex items-center gap-2">
-          <FuelTypeToggle value={fuelType} onChange={handleFuelTypeChange} />
-          <CardTypeFilter value={cardType} onChange={setCardType} />
-          <BrandFilter value={brand} onChange={setBrand} availableBrands={brandsData?.brands} />
-          <div className="flex-1" />
-          <SortSelector
-            value={sortBy}
-            onChange={setSortBy}
-            showDistance={!!(lat && lng)}
-          />
-        </div>
       </div>
 
       {/* 주유소 리스트 */}
@@ -235,6 +252,23 @@ export default function BrowsePage() {
       </div>
 
       <BottomNav />
+
+      <FilterSheet
+        open={filterSheetOpen}
+        onClose={() => setFilterSheetOpen(false)}
+        district={district}
+        onDistrictChange={handleDistrictChange}
+        fuelType={fuelType}
+        onFuelTypeChange={handleFuelTypeChange}
+        cardType={cardType}
+        onCardTypeChange={setCardType}
+        brand={brand}
+        onBrandChange={setBrand}
+        availableBrands={brandsData?.brands}
+        radius={radius}
+        onRadiusChange={setRadius}
+        isNearby={isNearby}
+      />
     </div>
   );
 }
