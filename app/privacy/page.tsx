@@ -80,7 +80,7 @@ export default function PrivacyPage() {
                 </a>
               </li>
               <li>
-                <strong>공공데이터포털</strong> — 상생카드 가맹점 목록.{" "}
+                <strong>공공데이터포털</strong> — 광주상생카드 및 온누리상품권 가맹점 목록.{" "}
                 <a href="https://www.data.go.kr" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
                   공공데이터포털
                 </a>
@@ -115,7 +115,7 @@ export default function PrivacyPage() {
         </div>
 
         <p className="text-center text-[11px] text-gray-400">
-          최종 수정일: 2026-03-10
+          최종 수정일: 2026-03-14
         </p>
       </div>
     </div>
