@@ -2,6 +2,7 @@
 
 import useSWR from "swr";
 import type { StationListResponse, District, FuelType, SortBy } from "@/types";
+import type { CardType } from "@/lib/db/queries/stationQueries";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -12,6 +13,7 @@ interface UseStationsOptions {
   fuelType: FuelType;
   sortBy: SortBy;
   brand?: string | null;
+  cardType?: CardType;
   lat?: number | null;
   lng?: number | null;
   radius?: number | null;
@@ -28,6 +30,7 @@ export function useStations(options: UseStationsOptions) {
   params.set("fuelType", options.fuelType);
   params.set("sortBy", options.sortBy);
   if (options.brand) params.set("brand", options.brand);
+  if (options.cardType) params.set("cardType", options.cardType);
   if (options.lat != null) params.set("lat", String(options.lat));
   if (options.lng != null) params.set("lng", String(options.lng));
   if (options.radius != null) params.set("radius", String(options.radius));

@@ -225,6 +225,11 @@ export default function StationCard({
               상생
             </span>
           )}
+          {station.onnuri && (
+            <span className="text-[9px] font-bold text-red-600 bg-red-50 px-1.5 py-0.5 rounded whitespace-nowrap">
+              온누리
+            </span>
+          )}
         </div>
       </div>
     </div>

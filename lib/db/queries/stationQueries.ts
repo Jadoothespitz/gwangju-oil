@@ -3,6 +3,8 @@ import { getStationsCollection } from "../models/Station";
 import type { District, FuelType, SortBy, StationWithDistance } from "@/types";
 import { AREAS } from "@/lib/gwangju/areas";
 
+export type CardType = "all" | "sangsaeng" | "onnuri";
+
 interface FindStationsOptions {
   district?: District;
   area?: string;
@@ -10,7 +12,7 @@ interface FindStationsOptions {
   fuelType: FuelType;
   sortBy: SortBy;
   brand?: string;
-  sangsaengOnly?: boolean;
+  cardType?: CardType;
   lat?: number;
   lng?: number;
   page: number;
@@ -24,8 +26,12 @@ export async function findStations(
 
   const matchFilter: Filter<Document> = { isActive: true };
 
-  if (options.sangsaengOnly !== false) {
+  if (options.cardType === "sangsaeng") {
     matchFilter["sangsaeng.matched"] = true;
+  } else if (options.cardType === "onnuri") {
+    matchFilter.onnuri = true;
+  } else {
+    matchFilter.$or = [{ "sangsaeng.matched": true }, { onnuri: true }];
   }
   if (options.district) {
     matchFilter.district = options.district;
@@ -133,7 +139,7 @@ export async function findNearbyStations(options: {
   fuelType: FuelType;
   sortBy: SortBy;
   brand?: string;
-  sangsaengOnly?: boolean;
+  cardType?: CardType;
   limit: number;
 }): Promise<StationWithDistance[]> {
   const collection = await getStationsCollection();
@@ -144,8 +150,12 @@ export async function findNearbyStations(options: {
     isActive: true,
   };
 
-  if (options.sangsaengOnly !== false) {
+  if (options.cardType === "sangsaeng") {
     matchStage["sangsaeng.matched"] = true;
+  } else if (options.cardType === "onnuri") {
+    matchStage.onnuri = true;
+  } else {
+    matchStage.$or = [{ "sangsaeng.matched": true }, { onnuri: true }];
   }
   if (options.brand) {
     matchStage.brand = options.brand;

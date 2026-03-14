@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { findStations, findNearbyStations, findStationsByIds } from "@/lib/db/queries/stationQueries";
+import type { CardType } from "@/lib/db/queries/stationQueries";
 import type { District, FuelType, SortBy } from "@/types";
 import { DISTRICTS, BRAND_NAMES } from "@/types";
 import { isRateLimited, getClientIp } from "@/lib/api/rateLimit";
@@ -26,6 +27,11 @@ export async function GET(request: NextRequest) {
     const fuelType = (params.get("fuelType") || "gasoline") as FuelType;
     const sortBy = (params.get("sortBy") || "price") as SortBy;
     const brand = params.get("brand") || undefined;
+    const cardTypeRaw = params.get("cardType");
+    const cardType: CardType =
+      cardTypeRaw === "sangsaeng" || cardTypeRaw === "onnuri"
+        ? cardTypeRaw
+        : "all";
     const page = Math.max(1, parseInt(params.get("page") || "1"));
     const limit = Math.min(100, Math.max(1, parseInt(params.get("limit") || "50")));
     const lat = params.get("lat") ? parseFloat(params.get("lat")!) : undefined;
@@ -63,6 +69,7 @@ export async function GET(request: NextRequest) {
         fuelType,
         sortBy,
         brand,
+        cardType,
         limit,
       });
       return NextResponse.json({ stations, total: stations.length, page: 1, limit });
@@ -75,6 +82,7 @@ export async function GET(request: NextRequest) {
       fuelType,
       sortBy,
       brand,
+      cardType,
       lat,
       lng,
       page,

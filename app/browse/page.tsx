@@ -15,6 +15,8 @@ import FuelTypeToggle from "@/components/filters/FuelTypeToggle";
 import SortSelector from "@/components/filters/SortSelector";
 import BrandFilter from "@/components/filters/BrandFilter";
 import RadiusFilter from "@/components/filters/RadiusFilter";
+import CardTypeFilter from "@/components/filters/CardTypeFilter";
+import type { CardType } from "@/lib/db/queries/stationQueries";
 import { DISTRICT_INFO } from "@/lib/gwangju/districts";
 import { cn } from "@/lib/utils/cn";
 
@@ -39,6 +41,7 @@ export default function BrowsePage() {
   });
   const [sortBy, setSortBy] = useState<SortBy>("price");
   const [brand, setBrand] = useState<string | null>(null);
+  const [cardType, setCardType] = useState<CardType>("all");
   const [selectedStationId, setSelectedStationId] = useState<string | null>(null);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -69,6 +72,7 @@ export default function BrowsePage() {
     fuelType,
     sortBy,
     brand,
+    cardType,
     lat,
     lng,
     radius: isNearby ? radius : undefined,
@@ -203,9 +207,10 @@ export default function BrowsePage() {
           </div>
         )}
 
-        {/* Row 2: 유종 + 정유사 + 정렬 */}
+        {/* Row 2: 유종 + 카드 + 정유사 + 정렬 */}
         <div className="flex items-center gap-2">
           <FuelTypeToggle value={fuelType} onChange={handleFuelTypeChange} />
+          <CardTypeFilter value={cardType} onChange={setCardType} />
           <BrandFilter value={brand} onChange={setBrand} availableBrands={brandsData?.brands} />
           <div className="flex-1" />
           <SortSelector

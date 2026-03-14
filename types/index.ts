@@ -38,6 +38,7 @@ export interface Station {
     matchScore?: number;
     matchMethod?: MatchMethod;
   };
+  onnuri?: boolean;
   isActive: boolean;
   lastSyncedAt: string;
   createdAt: string;
