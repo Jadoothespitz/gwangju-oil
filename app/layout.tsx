@@ -3,12 +3,19 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "오매나! 광주 기름 싸다!",
-  description: "광주광역시 상생카드 가맹 주유소 가격 비교 서비스",
-  manifest: "/manifest.json",
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: "default",
-    title: "오매나기름집",
+  description: "광주광역시 상생카드·온누리상품권 가맹 주유소 가격 비교 서비스",
+  openGraph: {
+    title: "오매나! 광주 기름 싸다!",
+    description: "광주광역시 상생카드·온누리상품권 가맹 주유소 가격 비교 서비스",
+    url: "https://gwangju-oil.vercel.app",
+    siteName: "오매나기름집",
+    locale: "ko_KR",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "오매나! 광주 기름 싸다!",
+    description: "광주광역시 상생카드·온누리상품권 가맹 주유소 가격 비교 서비스",
   },
 };
 
@@ -27,10 +34,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ko">
-      <head>
-        <link rel="icon" href="/icons/icon-192x192.png" />
-        <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
-      </head>
+      <head />
       <body className="min-h-dvh flex flex-col">
         {children}
       </body>

@@ -2,6 +2,7 @@ import Link from "next/link";
 
 export const metadata = {
   title: "개인정보처리방침 — 착한 가격 기름집들",
+  robots: { index: false },
 };
 
 export default function PrivacyPage() {
