@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils/cn";
 
 const NAV_ITEMS = [
   { href: "/home", label: "홈", icon: HomeIcon },
-  { href: "/browse", label: "탐색", icon: SearchIcon },
+  { href: "/", label: "탐색", icon: SearchIcon },
   { href: "/favorites", label: "즐겨찾기", icon: HeartIcon },
 ];
 

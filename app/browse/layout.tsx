@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   alternates: {
-    canonical: "https://gwangju-oil.vercel.app/browse",
+    canonical: "https://gwangju-oil.vercel.app/",
   },
 };
 
