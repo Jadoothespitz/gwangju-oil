@@ -16,22 +16,31 @@ config({ path: path.join(__dirname, "..", ".env.local") });
 
 const API_KEY = process.env.OPINET_API_KEY!;
 
-async function fetchAvgPrices() {
-  const url = `https://www.opinet.co.kr/api/avgSidoPrice.do?code=${API_KEY}&out=json`;
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`오피넷 API 오류: ${res.status}`);
-  const json = await res.json();
-  const items: Array<{ SIDONM: string; PRODCD: string; PRICE: number }> = json.RESULT.OIL;
+async function fetchAvgPrices(retries = 3, delayMs = 10_000) {
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      const url = `https://www.opinet.co.kr/api/avgSidoPrice.do?code=${API_KEY}&out=json`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`오피넷 API 오류: ${res.status}`);
+      const json = await res.json();
+      const items: Array<{ SIDONM: string; PRODCD: string; PRICE: number }> = json.RESULT.OIL;
 
-  const get = (sidonm: string, prodcd: string) =>
-    items.find((d) => d.SIDONM === sidonm && d.PRODCD === prodcd)?.PRICE ?? null;
+      const get = (sidonm: string, prodcd: string) =>
+        items.find((d) => d.SIDONM === sidonm && d.PRODCD === prodcd)?.PRICE ?? null;
 
-  return {
-    national_gasoline: get("전국", "B027"),
-    national_diesel:   get("전국", "D047"),
-    gwangju_gasoline:  get("광주", "B027"),
-    gwangju_diesel:    get("광주", "D047"),
-  };
+      return {
+        national_gasoline: get("전국", "B027"),
+        national_diesel:   get("전국", "D047"),
+        gwangju_gasoline:  get("광주", "B027"),
+        gwangju_diesel:    get("광주", "D047"),
+      };
+    } catch (err) {
+      if (attempt === retries) throw err;
+      console.warn(`오피넷 API 실패 (${attempt}/${retries}), ${delayMs / 1000}초 후 재시도...`, err);
+      await new Promise((r) => setTimeout(r, delayMs));
+    }
+  }
+  throw new Error("unreachable");
 }
 
 function kstToday() {
@@ -96,4 +105,4 @@ async function snapshotAvgPrice() {
   }
 }
 
-snapshotAvgPrice().catch(console.error);
+snapshotAvgPrice().catch((err) => { console.error(err); process.exit(1); });
