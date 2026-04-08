@@ -42,3 +42,6 @@ next-env.d.ts
 
 # scripts data
 /scripts/data/
+
+# claude code worktrees
+.claude/worktrees/
