@@ -16,6 +16,10 @@ const GWANGJU_CENTERS = [
 ];
 const SEARCH_RADIUS = 8000;
 
+export async function GET(request: NextRequest) {
+  return POST(request);
+}
+
 export async function POST(request: NextRequest) {
   try {
     // 레이트 리밋 (5분에 1회)

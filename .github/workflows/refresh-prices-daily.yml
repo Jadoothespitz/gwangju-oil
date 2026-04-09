@@ -13,6 +13,8 @@ jobs:
     steps:
       - name: 코드 체크아웃
         uses: actions/checkout@v4
+        with:
+          clean: true
 
       - name: Node.js 설치
         uses: actions/setup-node@v4
@@ -28,9 +30,3 @@ jobs:
           MONGODB_URI: ${{ secrets.MONGODB_URI }}
           OPINET_API_KEY: ${{ secrets.OPINET_API_KEY }}
         run: npm run prices:refresh
-
-      - name: 평균 유가 스냅샷
-        env:
-          MONGODB_URI: ${{ secrets.MONGODB_URI }}
-          OPINET_API_KEY: ${{ secrets.OPINET_API_KEY }}
-        run: npm run prices:snapshot

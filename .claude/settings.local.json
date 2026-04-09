@@ -35,7 +35,17 @@
       "Bash(git config:*)",
       "Bash(git remote get-url:*)",
       "Bash(git push:*)",
-      "Bash(ipconfig:*)"
+      "Bash(ipconfig:*)",
+      "Bash(git -C d:/lacajadejugete/gwangju-gas ls-files --error-unmatch .claude/worktrees)",
+      "Bash(git -C d:/lacajadejugete/gwangju-gas ls-files --cached .claude/)",
+      "Bash(git -C d:/lacajadejugete/gwangju-gas ls-files -s .claude/)",
+      "Bash(git -C d:/lacajadejugete/gwangju-gas log --all --oneline --diff-filter=A -- \".claude/worktrees/*\")",
+      "Bash(git -C d:/lacajadejugete/gwangju-gas cat-file -t HEAD:.claude/worktrees)",
+      "Bash(git -C d:/lacajadejugete/gwangju-gas show b4bee24 --stat)",
+      "Bash(git -C d:/lacajadejugete/gwangju-gas ls-tree b4bee24 .claude/)",
+      "Bash(git -C d:/lacajadejugete/gwangju-gas log --oneline b4bee24..HEAD -- \".claude/worktrees/*\")",
+      "Bash(git -C d:/lacajadejugete/gwangju-gas show cb61862 --stat)",
+      "Bash(git -C d:/lacajadejugete/gwangju-gas ls-tree b4bee24 .claude/worktrees/)"
     ]
   }
 }
