@@ -39,10 +39,28 @@ export default function BrowsePage() {
   const [brand, setBrand] = useState<string | null>(null);
   const [cardType, setCardType] = useState<CardType>("all");
   const [selectedStationId, setSelectedStationId] = useState<string | null>(null);
+  const [focusStation, setFocusStation] = useState<{
+    stationId: string;
+    center: { lat: number; lng: number };
+  } | null>(null);
   const [filterSheetOpen, setFilterSheetOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const searchInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const stationId = params.get("station");
+    const clat = params.get("clat");
+    const clng = params.get("clng");
+    if (stationId && clat && clng) {
+      setSelectedStationId(stationId);
+      setFocusStation({
+        stationId,
+        center: { lat: parseFloat(clat), lng: parseFloat(clng) },
+      });
+    }
+  }, []);
 
   const { lat, lng, isFallback, loading: locationLoading } = useGeolocation();
   const { favoriteIds, toggleFavorite } = useFavorites();
@@ -80,13 +98,15 @@ export default function BrowsePage() {
   const mapCenter = useMemo(() => {
     if (isNearby && lat && lng) return { lat, lng };
     if (district && district !== "nearby") return DISTRICT_INFO[district].center;
+    if (focusStation) return focusStation.center;
     return undefined;
-  }, [district, isNearby, lat, lng]);
+  }, [district, isNearby, lat, lng, focusStation]);
 
   const mapLevel = useMemo(() => {
     if (district) return 6;
+    if (focusStation) return 4;
     return undefined;
-  }, [district]);
+  }, [district, focusStation]);
 
   const filteredStations = useMemo(() => {
     if (!searchQuery.trim()) return stations;
@@ -97,6 +117,7 @@ export default function BrowsePage() {
   const handleDistrictChange = (d: District | "nearby" | null) => {
     setDistrict(d);
     setSelectedStationId(null);
+    setFocusStation(null);
     setSearchQuery("");
     if (d === "nearby") {
       setSortBy("distance");

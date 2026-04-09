@@ -5,6 +5,7 @@ import Header from "@/components/layout/Header";
 import BottomNav from "@/components/layout/BottomNav";
 import { useAvgPrices } from "@/lib/hooks/useAvgPrices";
 import PriceChart from "@/components/PriceChart";
+import MvpStations from "@/components/MvpStations";
 
 const FEEDBACK_URL =
   "https://docs.google.com/forms/d/e/1FAIpQLSfkrHOkpLBrjh40E_J584whovB9kGM4ySqmUu2R7KM6Y8ODcA/viewform?usp=header";
@@ -111,6 +112,9 @@ export default function HomePage() {
             )}
             <p className="text-[10px] text-gray-400 px-4 pb-2.5">단위: 원/L · 등락: 전일대비 · 출처: 오피넷</p>
           </div>
+
+          {/* 오늘의 MVP 주유소 */}
+          <MvpStations />
 
           {/* 유가 추이 차트 */}
           <PriceChart />

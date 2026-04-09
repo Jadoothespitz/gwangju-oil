@@ -31,7 +31,7 @@ export default function StationList({
     if (el) {
       el.scrollIntoView({ behavior: "smooth", block: "center" });
     }
-  }, [selectedStationId]);
+  }, [selectedStationId, stations.length]);
 
   if (isLoading) {
     return (
