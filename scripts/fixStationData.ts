@@ -4,6 +4,7 @@
  * 1. 한진주유소 → brand: "ALT" (알뜰주유소)
  * 2. 평화셀프주유소 (opinet_id: A0019944) → name: "독도사랑주유소"
  * 4. 코끼리주유소 (opinet_id: A0019786) → isActive: false (오피넷 삭제됨, 영업 여부 불명)
+ * 5. 풍암대림주유소 (uni_id: SS0092) → isActive: false (폐업)
  *
  * 사용법: npm run fix:stationdata
  */
@@ -76,6 +77,18 @@ async function fixStationData() {
       console.log(`✓ 코끼리주유소 (${kokkiri.name}): isActive → false`);
     } else {
       console.log("✗ opinet_id A0019786: 찾을 수 없음");
+    }
+
+    // 5. 풍암대림주유소 (uni_id: SS0092) → isActive: false (폐업)
+    const pungam = await col.findOne({ uni_id: "SS0092" });
+    if (pungam) {
+      await col.updateOne(
+        { _id: pungam._id },
+        { $set: { isActive: false } }
+      );
+      console.log(`✓ 풍암대림주유소 (${pungam.name}): isActive → false`);
+    } else {
+      console.log("✗ uni_id SS0092: 찾을 수 없음");
     }
 
     console.log("\n완료");
