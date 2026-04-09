@@ -45,7 +45,10 @@
       "Bash(git -C d:/lacajadejugete/gwangju-gas ls-tree b4bee24 .claude/)",
       "Bash(git -C d:/lacajadejugete/gwangju-gas log --oneline b4bee24..HEAD -- \".claude/worktrees/*\")",
       "Bash(git -C d:/lacajadejugete/gwangju-gas show cb61862 --stat)",
-      "Bash(git -C d:/lacajadejugete/gwangju-gas ls-tree b4bee24 .claude/worktrees/)"
+      "Bash(git -C d:/lacajadejugete/gwangju-gas ls-tree b4bee24 .claude/worktrees/)",
+      "WebSearch",
+      "WebFetch(domain:claude.com)",
+      "WebFetch(domain:api.telegram.org)"
     ]
   }
 }

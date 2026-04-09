@@ -19,6 +19,21 @@ config({ path: path.join(__dirname, "..", ".env.local") });
 const API_KEY = process.env.OPINET_API_KEY!;
 const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
+async function sendTelegram(text: string) {
+  const token = process.env.TELEGRAM_BOT_TOKEN;
+  const chatId = process.env.TELEGRAM_CHAT_ID;
+  if (!token || !chatId) return;
+  try {
+    await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ chat_id: chatId, text, parse_mode: "HTML" }),
+    });
+  } catch (e) {
+    console.error("Telegram 알림 실패:", e);
+  }
+}
+
 const GWANGJU_CENTERS = [
   { name: "광산구 중심", lat: 35.1397, lng: 126.7930 },
   { name: "광산구 남부", lat: 35.1100, lng: 126.7930 },
@@ -220,6 +235,38 @@ async function refreshPrices() {
       appendFileSync(summaryPath, summaryContent);
     } else {
       console.log(summaryContent);
+    }
+
+    // 2일 이상 갱신 안 된 주유소 감지 → Telegram 알림
+    const twoDaysAgo = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString();
+    const stale = await collection
+      .find({
+        isActive: true,
+        opinet_id: { $exists: true, $ne: null },
+        $or: [
+          { "prices.updatedAt": { $lt: twoDaysAgo } },
+          { "prices.updatedAt": { $exists: false } },
+        ],
+      })
+      .toArray();
+
+    if (stale.length > 0) {
+      const staleLines = stale.map((s) => {
+        const lastUpdate = s.prices?.updatedAt
+          ? `마지막 갱신: ${s.prices.updatedAt.slice(0, 10)}`
+          : "가격 정보 없음";
+        return `• <b>${s.name}</b> (${s.opinet_id}) — ${lastUpdate}`;
+      });
+      const msg = [
+        `⚠️ <b>가격 갱신 이상 감지</b>`,
+        ``,
+        `다음 주유소가 2일 이상 가격 미갱신 상태입니다:`,
+        ...staleLines,
+        ``,
+        `폐업이면 답장: <code>/inactive {opinet_id}</code>`,
+      ].join("\n");
+      await sendTelegram(msg);
+      console.log(`\nTelegram 알림 전송: ${stale.length}개 주유소 미갱신`);
     }
   } finally {
     await client.close();
