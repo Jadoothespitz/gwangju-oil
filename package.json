@@ -15,6 +15,7 @@
     "onnuri:add": "tsx scripts/addOnnuriStations.ts",
     "prices:refresh": "tsx scripts/refreshPrices.ts",
     "prices:snapshot": "tsx scripts/snapshotAvgPrice.ts",
+    "prices:import": "tsx scripts/importHistoricalPrices.ts",
     "fix:brands": "tsx scripts/fixBrandNames.ts",
     "fix:stationdata": "tsx scripts/fixStationData.ts"
   },
