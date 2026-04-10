@@ -48,7 +48,8 @@
       "Bash(git -C d:/lacajadejugete/gwangju-gas ls-tree b4bee24 .claude/worktrees/)",
       "WebSearch",
       "WebFetch(domain:claude.com)",
-      "WebFetch(domain:api.telegram.org)"
+      "WebFetch(domain:api.telegram.org)",
+      "WebFetch(domain:gwangju-oil.vercel.app)"
     ]
   }
 }

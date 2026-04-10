@@ -45,3 +45,6 @@ next-env.d.ts
 
 # claude code worktrees
 .claude/worktrees/
+
+# codesight generated wiki (auto-generated, do not commit)
+.codesight/
