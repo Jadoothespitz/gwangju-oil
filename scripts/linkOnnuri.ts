@@ -34,17 +34,10 @@ async function main() {
   await client.connect();
   const col = client.db("gwangju-oil").collection("stations");
 
-  // 기존 onnuri: true 전부 초기화 (재실행 시 중복 방지)
-  const cleared = await col.updateMany(
-    { onnuri: true },
-    { $unset: { onnuri: "" } }
-  );
-  if (cleared.modifiedCount > 0) {
-    console.log(`기존 온누리 마킹 ${cleared.modifiedCount}건 초기화\n`);
-  }
-
+  // 1단계: 마킹 (먼저 set — 실패해도 기존 데이터 보존)
   let matched = 0;
-  let notFound = 0;
+  const notFoundList: OnnuriEntry[] = [];
+  const matchedIds: string[] = [];
 
   for (const entry of entries) {
     const result = await col.updateOne(
@@ -56,19 +49,30 @@ async function main() {
       console.log(
         `  ✓ ${entry.가맹점명} (${entry.opinet_station_id}) → ${entry.opinet_상호}`
       );
+      matchedIds.push(entry.opinet_station_id);
       matched++;
     } else {
-      console.log(
-        `  ✗ NOT FOUND: ${entry.가맹점명} (${entry.opinet_station_id})`
-      );
-      notFound++;
+      notFoundList.push(entry);
     }
+  }
+
+  // 2단계: 이번 목록에 없는 주유소의 onnuri 플래그만 제거
+  const cleared = await col.updateMany(
+    { onnuri: true, opinet_id: { $nin: matchedIds } },
+    { $unset: { onnuri: "" } }
+  );
+  if (cleared.modifiedCount > 0) {
+    console.log(`\n온누리 목록에서 제외된 주유소 ${cleared.modifiedCount}건 마킹 해제`);
   }
 
   console.log(`\n=== 완료 ===`);
   console.log(`  매칭: ${matched}건`);
-  if (notFound > 0) {
-    console.log(`  미매칭: ${notFound}건 (DB에 opinet_id 없음 — opinet:link 먼저 실행 필요)`);
+  if (notFoundList.length > 0) {
+    console.log(`  미매칭: ${notFoundList.length}건 (DB에 opinet_id 없음 — opinet:link 먼저 실행 필요)\n`);
+    console.log(`--- 미매칭 목록 ---`);
+    for (const e of notFoundList) {
+      console.log(`  ${e.가맹점명} | ${e.opinet_station_id} | ${e.소속시장명}`);
+    }
   }
 
   await client.close();
