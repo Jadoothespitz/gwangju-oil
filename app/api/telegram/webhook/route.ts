@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
     const text: string = message.text ?? "";
 
     // /inactive {opinet_id} — 폐업 처리
-    const inactiveMatch = text.match(/^\/inactive\s+(\S+)/i);
+    const inactiveMatch = text.match(/^\/inactive\s+(\S{1,20})/i);
     if (inactiveMatch) {
       const opinetId = inactiveMatch[1].trim();
       const db = await getDb();
