@@ -48,7 +48,7 @@ function PriceSkeleton() {
 }
 
 export default function HomePage() {
-  const { data, isLoading } = useAvgPrices();
+  const { data, isLoading, error } = useAvgPrices();
 
   return (
     <div className="flex flex-col h-dvh overflow-hidden">
@@ -74,6 +74,10 @@ export default function HomePage() {
               <div className="px-4 py-4">
                 <PriceSkeleton />
               </div>
+            ) : error ? (
+              <div className="px-4 py-5 text-center text-sm text-gray-400">
+                유가 정보를 불러오지 못했습니다.
+              </div>
             ) : (
               <table className="w-full">
                 <thead>
@@ -87,23 +91,23 @@ export default function HomePage() {
                   <tr>
                     <td className="text-left py-3 px-4 text-sm font-medium text-gray-600">휘발유</td>
                     <PriceCell
-                      price={data?.national.gasoline.price ?? null}
-                      diff={data?.national.gasoline.diff ?? null}
+                      price={data?.national?.gasoline?.price ?? null}
+                      diff={data?.national?.gasoline?.diff ?? null}
                     />
                     <PriceCell
-                      price={data?.gwangju.gasoline.price ?? null}
-                      diff={data?.gwangju.gasoline.diff ?? null}
+                      price={data?.gwangju?.gasoline?.price ?? null}
+                      diff={data?.gwangju?.gasoline?.diff ?? null}
                     />
                   </tr>
                   <tr>
                     <td className="text-left py-3 px-4 text-sm font-medium text-gray-600">경유</td>
                     <PriceCell
-                      price={data?.national.diesel.price ?? null}
-                      diff={data?.national.diesel.diff ?? null}
+                      price={data?.national?.diesel?.price ?? null}
+                      diff={data?.national?.diesel?.diff ?? null}
                     />
                     <PriceCell
-                      price={data?.gwangju.diesel.price ?? null}
-                      diff={data?.gwangju.diesel.diff ?? null}
+                      price={data?.gwangju?.diesel?.price ?? null}
+                      diff={data?.gwangju?.diesel?.diff ?? null}
                     />
                   </tr>
                 </tbody>

@@ -13,7 +13,11 @@ interface AvgPricesResponse {
   date: string | null;
 }
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
+const fetcher = (url: string) =>
+  fetch(url).then((res) => {
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return res.json();
+  });
 
 export function useAvgPrices() {
   const { data, error, isLoading } = useSWR<AvgPricesResponse>(
