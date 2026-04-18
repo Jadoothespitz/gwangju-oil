@@ -28,14 +28,26 @@ async function callOpinet<T>(
   });
 
   const url = `${BASE_URL}/${endpoint}?${searchParams.toString()}`;
-  const response = await fetch(url);
+  const response = await fetch(url, { signal: AbortSignal.timeout(10_000) });
 
   if (!response.ok) {
-    throw new Error(`오피넷 API 오류: ${response.status} ${response.statusText}`);
+    const body = await response.text().catch(() => "(body read failed)");
+    throw new Error(`오피넷 HTTP ${response.status}: ${body.slice(0, 300)}`);
   }
 
-  const data = await response.json();
-  return data.RESULT.OIL;
+  let data: unknown;
+  const raw = await response.text();
+  try {
+    data = JSON.parse(raw);
+  } catch {
+    throw new Error(`오피넷 JSON 파싱 실패 (응답 미리보기): ${raw.slice(0, 300)}`);
+  }
+
+  const oil = (data as { RESULT?: { OIL?: T } })?.RESULT?.OIL;
+  if (oil == null) {
+    throw new Error(`오피넷 RESULT.OIL 없음: ${raw.slice(0, 300)}`);
+  }
+  return oil;
 }
 
 /** 시군구 코드 조회 */
