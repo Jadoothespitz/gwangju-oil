@@ -1,0 +1,25 @@
+name: 평균 유가 스냅샷
+
+on:
+  schedule:
+    # 매일 오전 7시 KST (UTC 22:00 전날)
+    - cron: "0 22 * * *"
+  workflow_dispatch: # 수동 실행 가능
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run prices:snapshot
+        env:
+          OPINET_API_KEY: ${{ secrets.OPINET_API_KEY }}
+          MONGODB_URI: ${{ secrets.MONGODB_URI }}

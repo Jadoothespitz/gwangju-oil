@@ -1,54 +1,48 @@
 import { NextResponse } from "next/server";
-import { getAvgSidoPrice } from "@/lib/opinet/client";
 import { getDb } from "@/lib/db/mongodb";
 
 export async function GET() {
   try {
-    const [data, db] = await Promise.all([getAvgSidoPrice(), getDb()]);
+    const db = await getDb();
+    const [latest, prev] = await db
+      .collection("avg_price_snapshot")
+      .find({})
+      .sort({ date: -1 })
+      .limit(2)
+      .toArray();
 
-    // B027=휘발유, D047=경유
-    const get = (sidonm: string, prodcd: string) =>
-      data.find((d) => d.SIDONM === sidonm && d.PRODCD === prodcd);
+    if (!latest) {
+      return NextResponse.json({ error: "데이터 없음" }, { status: 503 });
+    }
 
-    const natGas = get("전국", "B027");
-    const natDie = get("전국", "D047");
-    const gjGas  = get("광주", "B027");
-    const gjDie  = get("광주", "D047");
-
-    // 오늘 이전 가장 최근 스냅샷에서 전일 가격 조회 → 직접 diff 계산
-    const today = new Date(Date.now() + 9 * 60 * 60 * 1000)
-      .toISOString().slice(0, 10).replace(/-/g, "");
-    const snapshot = await db.collection("avg_price_snapshot")
-      .findOne({ date: { $lt: today } }, { sort: { date: -1 } });
-
-    const calcDiff = (todayPrice: number | undefined, prevPrice: unknown) => {
-      if (todayPrice == null || typeof prevPrice !== "number") return null;
-      return Math.round((todayPrice - prevPrice) * 10) / 10;
+    const calcDiff = (today: number | null, yesterday: number | null) => {
+      if (today == null || yesterday == null) return null;
+      return Math.round((today - yesterday) * 10) / 10;
     };
 
     return NextResponse.json(
       {
         national: {
           gasoline: {
-            price: natGas?.PRICE ?? null,
-            diff: calcDiff(natGas?.PRICE, snapshot?.national_gasoline),
+            price: latest.national_gasoline ?? null,
+            diff: calcDiff(latest.national_gasoline, prev?.national_gasoline ?? null),
           },
           diesel: {
-            price: natDie?.PRICE ?? null,
-            diff: calcDiff(natDie?.PRICE, snapshot?.national_diesel),
+            price: latest.national_diesel ?? null,
+            diff: calcDiff(latest.national_diesel, prev?.national_diesel ?? null),
           },
         },
         gwangju: {
           gasoline: {
-            price: gjGas?.PRICE ?? null,
-            diff: calcDiff(gjGas?.PRICE, snapshot?.gwangju_gasoline),
+            price: latest.gwangju_gasoline ?? null,
+            diff: calcDiff(latest.gwangju_gasoline, prev?.gwangju_gasoline ?? null),
           },
           diesel: {
-            price: gjDie?.PRICE ?? null,
-            diff: calcDiff(gjDie?.PRICE, snapshot?.gwangju_diesel),
+            price: latest.gwangju_diesel ?? null,
+            diff: calcDiff(latest.gwangju_diesel, prev?.gwangju_diesel ?? null),
           },
         },
-        date: natGas?.DATE ?? null,
+        date: latest.date ?? null,
       },
       {
         headers: { "Cache-Control": "s-maxage=3600, stale-while-revalidate=7200" },
