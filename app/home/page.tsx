@@ -122,6 +122,24 @@ export default function HomePage() {
           {/* 바로가기 */}
           <div className="space-y-2">
             <Link
+              href="/lab"
+              className="flex items-center justify-between w-full bg-blue-600 rounded-xl border border-blue-500 shadow-sm px-4 py-4 hover:bg-blue-700 transition-colors"
+            >
+              <div className="flex items-center gap-3">
+                <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 3h6M9 3v6.5L5.5 16A2 2 0 007.4 19h9.2a2 2 0 001.9-3L15 9.5V3M9 14h6" />
+                </svg>
+                <div>
+                  <p className="text-sm font-semibold text-white">경제적 주유소 찾기</p>
+                  <p className="text-xs text-blue-200">내 연비 · 거리 반영한 순 주유량 계산</p>
+                </div>
+              </div>
+              <svg className="w-4 h-4 text-blue-200" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </Link>
+
+            <Link
               href="/favorites"
               className="flex items-center justify-between w-full bg-white rounded-xl border border-gray-100 shadow-sm px-4 py-4 hover:bg-gray-50 transition-colors"
             >

@@ -51,7 +51,8 @@
       "WebFetch(domain:api.telegram.org)",
       "WebFetch(domain:gwangju-oil.vercel.app)",
       "Bash(rm \"d:/lacajadejugete/gwangju-gas/app/api/debug-env/route.ts\")",
-      "Bash(rmdir \"d:/lacajadejugete/gwangju-gas/app/api/debug-env\")"
+      "Bash(rmdir \"d:/lacajadejugete/gwangju-gas/app/api/debug-env\")",
+      "WebFetch(domain:developers.kakaomobility.com)"
     ]
   }
 }

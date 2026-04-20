@@ -24,17 +24,17 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const url = `https://dapi.kakao.com/v2/local/search/address.json?query=${encodeURIComponent(address)}`;
-    const response = await fetch(url, {
-      headers: { Authorization: `KakaoAK ${apiKey}` },
-    });
+    // 주소 검색 시도, 결과 없으면 키워드 검색으로 폴백
+    const tryFetch = async (endpoint: string) => {
+      const url = `https://dapi.kakao.com/v2/local/${endpoint}?query=${encodeURIComponent(address)}`;
+      const res = await fetch(url, { headers: { Authorization: `KakaoAK ${apiKey}` } });
+      if (!res.ok) throw new Error(`카카오 API 오류: ${res.status}`);
+      const data = await res.json();
+      return data.documents?.[0] ?? null;
+    };
 
-    if (!response.ok) {
-      throw new Error(`카카오 API 오류: ${response.status}`);
-    }
-
-    const data = await response.json();
-    const result = data.documents?.[0];
+    let result = await tryFetch("search/address.json");
+    if (!result) result = await tryFetch("search/keyword.json");
 
     if (!result) {
       return NextResponse.json(
