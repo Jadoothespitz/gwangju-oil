@@ -22,7 +22,7 @@ export default function BrandFilter({ value, onChange, availableBrands }: BrandF
     <select
       value={value ?? ""}
       onChange={(e) => onChange(e.target.value === "" ? null : e.target.value)}
-      className="h-9 px-2 text-sm border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+      className="h-9 px-2 text-sm border border-[#E8E3D8] rounded-xl bg-white text-[#0E0E12] focus:outline-none focus:ring-2 focus:ring-[#2046E5] focus:border-transparent"
     >
       <option value="">정유사 전체</option>
       {options.map(([code, name]) => (

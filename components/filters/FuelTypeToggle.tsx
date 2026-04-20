@@ -9,13 +9,23 @@ interface FuelTypeToggleProps {
 
 export default function FuelTypeToggle({ value, onChange }: FuelTypeToggleProps) {
   return (
-    <select
-      value={value}
-      onChange={(e) => onChange(e.target.value as FuelType)}
-      className="h-9 px-2 text-sm border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-    >
-      <option value="gasoline">휘발유</option>
-      <option value="diesel">경유</option>
-    </select>
+    <div className="flex bg-[#F3EFE5] rounded-full p-[3px] w-full">
+      {(["gasoline", "diesel"] as FuelType[]).map((type) => {
+        const active = value === type;
+        return (
+          <button
+            key={type}
+            onClick={() => onChange(type)}
+            className={`flex-1 py-2 text-sm font-bold rounded-full transition-all ${
+              active
+                ? "bg-white text-[#0E0E12] shadow-sm"
+                : "text-[#3A3A44] hover:text-[#0E0E12]"
+            }`}
+          >
+            {type === "gasoline" ? "휘발유" : "경유"}
+          </button>
+        );
+      })}
+    </div>
   );
 }

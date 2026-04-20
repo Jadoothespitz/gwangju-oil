@@ -15,8 +15,8 @@ export default function SortSelector({ value, onChange, showDistance = true }: S
         onClick={() => onChange("price")}
         className={`px-3 py-1.5 text-xs font-medium rounded-full transition-colors ${
           value === "price"
-            ? "bg-blue-600 text-white"
-            : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+            ? "bg-[#2046E5] text-white"
+            : "bg-[#F3EFE5] text-[#3A3A44] hover:bg-[#E8E3D8]"
         }`}
       >
         가격순

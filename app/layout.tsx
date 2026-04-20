@@ -25,7 +25,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  themeColor: "#1d4ed8",
+  themeColor: "#2046E5",
 };
 
 export default function RootLayout({
@@ -35,7 +35,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ko">
-      <head />
+      <head>
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Paperlogy:wght@700;800;900&display=swap"
+        />
+      </head>
       <body className="min-h-dvh flex flex-col">
         {children}
         <Analytics />

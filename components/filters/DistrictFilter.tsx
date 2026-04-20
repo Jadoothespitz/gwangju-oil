@@ -20,7 +20,7 @@ export default function DistrictFilter({ selected, onChange }: DistrictFilterPro
         const v = e.target.value as DistrictValue;
         onChange(v === "" ? null : v);
       }}
-      className="h-9 px-2 text-sm border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+      className="h-9 px-2 text-sm border border-[#E8E3D8] rounded-xl bg-white text-[#0E0E12] focus:outline-none focus:ring-2 focus:ring-[#2046E5] focus:border-transparent"
     >
       <option value="nearby">내 주변</option>
       <option value="">구 전체</option>

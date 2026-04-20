@@ -28,17 +28,15 @@ export default function StationList({
   useEffect(() => {
     if (!selectedStationId) return;
     const el = cardRefs.current.get(selectedStationId);
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth", block: "center" });
-    }
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
   }, [selectedStationId]);
 
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
         <div className="flex flex-col items-center gap-2">
-          <div className="w-8 h-8 border-3 border-blue-600 border-t-transparent rounded-full animate-spin" />
-          <p className="text-sm text-gray-500">주유소 검색 중...</p>
+          <div className="w-7 h-7 border-2 border-[#2046E5] border-t-transparent rounded-full animate-spin" />
+          <p className="text-xs text-[#3A3A44]">주유소 검색 중...</p>
         </div>
       </div>
     );
@@ -48,12 +46,8 @@ export default function StationList({
     return (
       <div className="flex items-center justify-center py-12">
         <div className="text-center">
-          <p className="text-gray-500 text-sm">
-            조건에 맞는 주유소가 없습니다.
-          </p>
-          <p className="text-gray-400 text-xs mt-1">
-            필터 조건을 변경해보세요.
-          </p>
+          <p className="text-sm font-semibold text-[#3A3A44]">조건에 맞는 주유소가 없습니다.</p>
+          <p className="text-xs text-[#C8C2B4] mt-1">필터 조건을 변경해보세요.</p>
         </div>
       </div>
     );
@@ -61,10 +55,10 @@ export default function StationList({
 
   return (
     <div className="station-list flex flex-col gap-2 p-3">
-      <p className="text-xs text-gray-500 px-1">
+      <p className="text-[11px] font-bold text-[#3A3A44] px-1">
         {stations.length}개 주유소
       </p>
-      {stations.map((station) => (
+      {stations.map((station, index) => (
         <div
           key={station.uni_id}
           ref={(el) => {
@@ -75,6 +69,7 @@ export default function StationList({
           <StationCard
             station={station}
             fuelType={fuelType}
+            rank={index + 1}
             isFavorite={favoriteIds.has(station.uni_id)}
             isSelected={selectedStationId === station.uni_id}
             onFavoriteToggle={() => onFavoriteToggle(station.uni_id)}

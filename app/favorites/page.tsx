@@ -62,9 +62,9 @@ export default function FavoritesPage() {
         <div className="flex flex-col flex-1 lg:flex-none lg:w-[400px] lg:order-1 overflow-hidden">
 
           {/* 필터 영역 */}
-          <div className="bg-white border-b border-gray-200 px-3 py-2.5 shrink-0">
+          <div className="bg-white border-b border-[#E8E3D8] px-3 py-2.5 shrink-0">
             <div className="flex items-center justify-between">
-              <span className="text-sm font-semibold text-gray-700">
+              <span className="text-sm font-bold text-[#0E0E12]">
                 즐겨찾기 ({favoriteIds.length})
               </span>
               <FuelTypeToggle value={fuelType} onChange={setFuelType} />
@@ -72,11 +72,11 @@ export default function FavoritesPage() {
           </div>
 
           {/* 주유소 리스트 */}
-          <div className="flex-1 min-h-0 bg-gray-50 overflow-y-auto pb-16">
+          <div className="flex-1 min-h-0 bg-[#FAF7F0] overflow-y-auto pb-16">
             {favoriteIds.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12 gap-3">
                 <svg
-                  className="w-12 h-12 text-gray-300"
+                  className="w-12 h-12 text-[#C8C2B4]"
                   fill="none"
                   stroke="currentColor"
                   strokeWidth={1.5}
@@ -84,10 +84,10 @@ export default function FavoritesPage() {
                 >
                   <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
                 </svg>
-                <p className="text-sm text-gray-500">
+                <p className="text-sm font-semibold text-[#3A3A44]">
                   즐겨찾기한 주유소가 없습니다
                 </p>
-                <p className="text-xs text-gray-400">
+                <p className="text-xs text-[#C8C2B4]">
                   주유소 카드의 하트 아이콘을 눌러 추가하세요
                 </p>
               </div>

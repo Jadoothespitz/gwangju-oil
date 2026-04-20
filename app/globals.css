@@ -1,17 +1,35 @@
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
 @import "tailwindcss";
 
+/* ── B 디자인 시스템 토큰 ── */
+@theme {
+  --color-brand:       #2046E5;
+  --color-brand-deep:  #1733B8;
+  --color-brand-bg:    #EEF1FF;
+  --color-surface-alt: #F3EFE5;
+  --color-app-bg:      #FAF7F0;
+  --color-ink:         #0E0E12;
+  --color-ink-soft:    #3A3A44;
+  --color-coral:       #FF5A4C;
+  --color-mint:        #00B372;
+  --color-sun:         #FFCF33;
+  --color-line:        #E8E3D8;
+
+  --font-sans: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Noto Sans KR', sans-serif;
+}
+
 :root {
-  --color-primary: #1d4ed8;
-  --color-primary-light: #3b82f6;
-  --color-bg: #f8fafc;
-  --color-card: #ffffff;
-  --color-text: #0f172a;
-  --color-text-secondary: #64748b;
-  --color-border: #e2e8f0;
-  --color-cheap: #16a34a;
-  --color-average: #ca8a04;
-  --color-expensive: #dc2626;
-  --color-sangsaeng: #7c3aed;
+  --color-primary:          #2046E5;
+  --color-primary-light:    #4D6FFF;
+  --color-bg:               #FAF7F0;
+  --color-card:             #ffffff;
+  --color-text:             #0E0E12;
+  --color-text-secondary:   #3A3A44;
+  --color-border:           #E8E3D8;
+  --color-cheap:            #00B372;
+  --color-average:          #ca8a04;
+  --color-expensive:        #FF5A4C;
+  --color-sangsaeng:        #2046E5;
 }
 
 html {
@@ -21,7 +39,7 @@ html {
 body {
   background-color: var(--color-bg);
   color: var(--color-text);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -31,7 +49,7 @@ body {
   padding-bottom: max(env(safe-area-inset-bottom, 0px), 1rem);
 }
 
-/* Map container — 모바일에서는 작게, 큰 화면에서는 넉넉하게 */
+/* Map container */
 .map-container {
   height: 25dvh;
   min-height: 150px;
@@ -60,7 +78,6 @@ body {
   -webkit-overflow-scrolling: touch;
 }
 
-/* Custom scrollbar */
 .station-list::-webkit-scrollbar {
   width: 4px;
 }

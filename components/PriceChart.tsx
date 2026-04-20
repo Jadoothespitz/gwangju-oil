@@ -84,7 +84,7 @@ function ChartSvg({
 
   if (data.length < 2) {
     return (
-      <div className="flex items-center justify-center text-xs text-gray-300" style={{ height: 130 }}>
+      <div className="flex items-center justify-center text-xs text-[#C8C2B4]" style={{ height: 130 }}>
         데이터 없음
       </div>
     );
@@ -154,8 +154,8 @@ function ChartSvg({
         return (
           <g key={i}>
             <line x1={PAD.left} y1={y} x2={W - PAD.right} y2={y}
-              stroke="#f0f0f0" strokeWidth={1} />
-            <text x={PAD.left - 3} y={y + 3.5} textAnchor="end" fontSize={8.5} fill="#bbb">
+              stroke="#EDE8E0" strokeWidth={1} />
+            <text x={PAD.left - 3} y={y + 3.5} textAnchor="end" fontSize={8.5} fill="#C8C2B4">
               {price.toLocaleString()}
             </text>
           </g>
@@ -164,14 +164,14 @@ function ChartSvg({
 
       {/* X 날짜 tick */}
       {xTicks.map((idx) => (
-        <text key={idx} x={toX(idx)} y={H - 2} textAnchor="middle" fontSize={8.5} fill="#bbb">
+        <text key={idx} x={toX(idx)} y={H - 2} textAnchor="middle" fontSize={8.5} fill="#C8C2B4">
           {fmtDateLabel(data[idx].date, period)}
         </text>
       ))}
 
       {/* 전국선 (점선) */}
       {natPoints.length > 1 && (
-        <path d={buildPath(natPoints)} fill="none" stroke="#cbd5e1" strokeWidth={1.2}
+        <path d={buildPath(natPoints)} fill="none" stroke="#C8C2B4" strokeWidth={1.2}
           strokeLinecap="round" strokeLinejoin="round" strokeDasharray="3 2" />
       )}
 
@@ -181,7 +181,7 @@ function ChartSvg({
           strokeLinecap="round" strokeLinejoin="round" />
       )}
 
-      {/* 마지막 점 (호버 없을 때) */}
+      {/* 마지막 점 */}
       {!hovered && gjPoints.length > 0 && (() => {
         const last = gjPoints[gjPoints.length - 1];
         return <circle cx={last[0]} cy={last[1]} r={2.5} fill={gjColor} />;
@@ -190,11 +190,10 @@ function ChartSvg({
       {/* 호버 오버레이 */}
       {hovered && hoverSnap && (
         <g>
-          {/* 수직 기준선 */}
           <line
             x1={hovered.svgX} y1={PAD.top}
             x2={hovered.svgX} y2={PAD.top + IH}
-            stroke="#94a3b8" strokeWidth={0.8} strokeDasharray="2 2"
+            stroke="#C8C2B4" strokeWidth={0.8} strokeDasharray="2 2"
           />
           {/* 광주 점 */}
           {gjVal != null && (
@@ -204,17 +203,17 @@ function ChartSvg({
           {/* 전국 점 */}
           {natVal != null && (
             <circle cx={hovered.svgX} cy={toY(natVal)} r={2}
-              fill="#94a3b8" stroke="white" strokeWidth={1} />
+              fill="#C8C2B4" stroke="white" strokeWidth={1} />
           )}
 
           {/* 툴팁 박스 */}
           <g transform={`translate(${ttX}, ${ttY})`}>
-            <rect width={TT_W} height={TT_H} rx={3} fill="white"
-              stroke="#e2e8f0" strokeWidth={0.8}
-              style={{ filter: "drop-shadow(0 1px 3px rgba(0,0,0,0.10))" }}
+            <rect width={TT_W} height={TT_H} rx={6} fill="white"
+              stroke="#E8E3D8" strokeWidth={0.8}
+              style={{ filter: "drop-shadow(0 1px 3px rgba(0,0,0,0.08))" }}
             />
             {/* 날짜 */}
-            <text x={6} y={10} fontSize={8} fill="#94a3b8">
+            <text x={6} y={10} fontSize={8} fill="#C8C2B4">
               {fmtDateFull(hoverSnap.date)}
             </text>
             {/* 광주 값 */}
@@ -223,9 +222,8 @@ function ChartSvg({
                 {`광주 ${gjVal.toLocaleString()}`}
               </text>
             )}
-            {/* 전국 값 */}
             {natVal != null && (
-              <text x={6} y={35} fontSize={8.5} fill="#94a3b8">
+              <text x={6} y={35} fontSize={8.5} fill="#C8C2B4">
                 {`전국 ${natVal.toLocaleString()}`}
               </text>
             )}
@@ -250,22 +248,22 @@ export default function PriceChart() {
 
   const gjKey: keyof Snapshot = fuel === "gasoline" ? "gwangju_gasoline" : "gwangju_diesel";
   const natKey: keyof Snapshot = fuel === "gasoline" ? "national_gasoline" : "national_diesel";
-  const gjColor = fuel === "gasoline" ? "#2563eb" : "#16a34a";
+  const gjColor = fuel === "gasoline" ? "#2046E5" : "#00B372";
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    <div className="bg-white rounded-2xl border border-[#E8E3D8] overflow-hidden">
       {/* 헤더 */}
-      <div className="bg-blue-50 px-4 py-3 border-b border-blue-100 flex items-center justify-between">
-        <h2 className="text-sm font-semibold text-blue-800">유가 추이</h2>
+      <div className="bg-[#EEF1FF] px-4 py-3 border-b border-[#D8DEFF] flex items-center justify-between">
+        <h2 className="text-sm font-bold text-[#0E0E12]">유가 추이</h2>
         <div className="flex gap-1">
           {PERIODS.map(p => (
             <button
               key={p.value}
               onClick={() => setPeriod(p.value)}
-              className={`text-xs px-2 py-0.5 rounded-full font-medium transition-colors ${
+              className={`text-xs px-2 py-0.5 rounded-full font-bold transition-colors ${
                 period === p.value
-                  ? "bg-blue-600 text-white"
-                  : "text-blue-500 hover:bg-blue-100"
+                  ? "bg-[#2046E5] text-white"
+                  : "text-[#2046E5] hover:bg-[#D8DEFF]"
               }`}
             >
               {p.label}
@@ -279,20 +277,20 @@ export default function PriceChart() {
         <div className="flex items-center gap-2 mb-2">
           <button
             onClick={() => setFuel("gasoline")}
-            className={`text-xs px-3 py-0.5 rounded-full border font-medium transition-colors ${
+            className={`text-xs px-3 py-0.5 rounded-full border font-bold transition-colors ${
               fuel === "gasoline"
-                ? "bg-blue-600 text-white border-blue-600"
-                : "text-gray-400 border-gray-200 hover:bg-gray-50"
+                ? "bg-[#2046E5] text-white border-[#2046E5]"
+                : "text-[#3A3A44] border-[#E8E3D8] hover:bg-[#F3EFE5]"
             }`}
           >
             휘발유
           </button>
           <button
             onClick={() => setFuel("diesel")}
-            className={`text-xs px-3 py-0.5 rounded-full border font-medium transition-colors ${
+            className={`text-xs px-3 py-0.5 rounded-full border font-bold transition-colors ${
               fuel === "diesel"
-                ? "bg-green-600 text-white border-green-600"
-                : "text-gray-400 border-gray-200 hover:bg-gray-50"
+                ? "bg-[#00B372] text-white border-[#00B372]"
+                : "text-[#3A3A44] border-[#E8E3D8] hover:bg-[#F3EFE5]"
             }`}
           >
             경유
@@ -302,30 +300,30 @@ export default function PriceChart() {
               <svg width="16" height="6">
                 <line x1="0" y1="3" x2="16" y2="3" stroke={gjColor} strokeWidth="2" strokeLinecap="round" />
               </svg>
-              <span className="text-[10px] text-gray-500">광주</span>
+              <span className="text-[10px] text-[#3A3A44]">광주</span>
             </span>
             <span className="flex items-center gap-1">
               <svg width="16" height="6">
-                <line x1="0" y1="3" x2="16" y2="3" stroke="#cbd5e1" strokeWidth="1.5"
+                <line x1="0" y1="3" x2="16" y2="3" stroke="#C8C2B4" strokeWidth="1.5"
                   strokeDasharray="3 2" strokeLinecap="round" />
               </svg>
-              <span className="text-[10px] text-gray-500">전국</span>
+              <span className="text-[10px] text-[#3A3A44]">전국</span>
             </span>
           </div>
         </div>
 
         {/* 차트 */}
         {isLoading ? (
-          <div className="animate-pulse bg-gray-100 rounded" style={{ height: 130 }} />
+          <div className="animate-pulse bg-[#F3EFE5] rounded-xl" style={{ height: 130 }} />
         ) : data && data.length >= 2 ? (
           <ChartSvg data={data} gjKey={gjKey} natKey={natKey} gjColor={gjColor} period={period} />
         ) : (
-          <div className="flex items-center justify-center text-xs text-gray-300" style={{ height: 130 }}>
+          <div className="flex items-center justify-center text-xs text-[#C8C2B4]" style={{ height: 130 }}>
             데이터 없음
           </div>
         )}
       </div>
-      <p className="text-[10px] text-gray-400 px-4 pb-2.5">단위: 원/L · 출처: 오피넷</p>
+      <p className="text-[10px] text-[#C8C2B4] px-4 pb-2.5">단위: 원/L · 출처: 오피넷</p>
     </div>
   );
 }

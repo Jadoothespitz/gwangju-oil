@@ -154,16 +154,16 @@ export default function BrowsePage() {
 
           {/* 위치 로딩 상태 (내 주변 모드) */}
           {isNearby && locationLoading && (
-            <div className="bg-white border-b border-gray-200 px-3 py-2 shrink-0">
-              <p className="text-xs text-blue-600 flex items-center gap-1">
-                <span className="w-3 h-3 border-2 border-blue-600 border-t-transparent rounded-full animate-spin inline-block" />
+            <div className="bg-white border-b border-[#E8E3D8] px-3 py-2 shrink-0">
+              <p className="text-xs text-[#2046E5] flex items-center gap-1">
+                <span className="w-3 h-3 border-2 border-[#2046E5] border-t-transparent rounded-full animate-spin inline-block" />
                 위치를 가져오는 중...
               </p>
             </div>
           )}
 
           {/* 필터 영역 */}
-          <div className="bg-white border-b border-gray-200 px-3 py-2 shrink-0">
+          <div className="bg-white border-b border-[#E8E3D8] px-3 py-2 shrink-0">
             <div className="flex items-center gap-2">
               {/* 필터 버튼 */}
               {(() => {
@@ -176,10 +176,10 @@ export default function BrowsePage() {
                   <button
                     onClick={() => setFilterSheetOpen(true)}
                     className={cn(
-                      "flex items-center gap-1.5 h-9 px-3 text-sm border rounded-lg transition-colors shrink-0",
+                      "flex items-center gap-1.5 h-9 px-3 text-sm border rounded-xl transition-colors shrink-0",
                       activeCount > 0
-                        ? "border-blue-500 text-blue-600 bg-blue-50"
-                        : "border-gray-300 text-gray-600 bg-white"
+                        ? "border-[#2046E5] text-[#2046E5] bg-[#EEF1FF]"
+                        : "border-[#E8E3D8] text-[#3A3A44] bg-white"
                     )}
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
@@ -187,7 +187,7 @@ export default function BrowsePage() {
                     </svg>
                     필터
                     {activeCount > 0 && (
-                      <span className="w-4 h-4 text-[11px] font-bold bg-blue-600 text-white rounded-full flex items-center justify-center">
+                      <span className="w-4 h-4 text-[11px] font-bold bg-[#2046E5] text-white rounded-full flex items-center justify-center">
                         {activeCount}
                       </span>
                     )}
@@ -209,8 +209,8 @@ export default function BrowsePage() {
                 className={cn(
                   "shrink-0 w-8 h-8 flex items-center justify-center rounded-full transition-colors",
                   searchOpen
-                    ? "bg-blue-600 text-white"
-                    : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                    ? "bg-[#2046E5] text-white"
+                    : "bg-[#F3EFE5] text-[#3A3A44] hover:bg-[#E8E3D8]"
                 )}
                 aria-label="주유소 이름 검색"
               >
@@ -229,11 +229,11 @@ export default function BrowsePage() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="주유소 이름 검색"
-                  className="flex-1 h-9 px-3 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="flex-1 h-9 px-3 text-sm border border-[#E8E3D8] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2046E5] focus:border-transparent"
                 />
                 <button
                   onClick={() => { setSearchQuery(""); setSearchOpen(false); }}
-                  className="shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200"
+                  className="shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-[#F3EFE5] text-[#3A3A44] hover:bg-[#E8E3D8]"
                   aria-label="검색 닫기"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -245,7 +245,7 @@ export default function BrowsePage() {
           </div>
 
           {/* 주유소 리스트 */}
-          <div className="flex-1 min-h-0 bg-gray-50 overflow-y-auto pb-16">
+          <div className="flex-1 min-h-0 bg-[#FAF7F0] overflow-y-auto pb-16">
             <StationList
               stations={filteredStations}
               fuelType={fuelType}
