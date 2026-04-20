@@ -46,6 +46,14 @@ body {
   }
 }
 
+@media (min-width: 1024px) {
+  .map-container {
+    height: 100%;
+    min-height: unset;
+    max-height: unset;
+  }
+}
+
 /* Station list scrollable area */
 .station-list {
   overflow-y: auto;

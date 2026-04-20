@@ -125,130 +125,139 @@ export default function BrowsePage() {
     <div className="flex flex-col h-dvh overflow-hidden">
       <Header />
 
-      {/* 지도 */}
-      <div className="relative shrink-0">
-        <KakaoMap
-          stations={filteredStations}
-          favoriteIds={favoriteSet}
-          fuelType={fuelType}
-          center={mapCenter}
-          mapLevel={mapLevel}
-          userLocation={lat && lng && !isFallback ? { lat, lng } : null}
-          selectedStationId={selectedStationId}
-          onStationSelect={setSelectedStationId}
-        />
-        {showFallbackToast && (
-          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-50 animate-fade-out">
-            <div className="bg-black/60 text-white text-sm px-4 py-2 rounded-lg whitespace-nowrap">
-              기본 위치를 광주광역시청으로 설정했다요
-            </div>
-          </div>
-        )}
-      </div>
+      {/* 모바일: 세로 (지도 위 + 필터/리스트 아래) / 데스크탑: 가로 (리스트 왼쪽 + 지도 오른쪽) */}
+      <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
 
-      {/* 위치 로딩 상태 (내 주변 모드) */}
-      {isNearby && locationLoading && (
-        <div className="bg-white border-b border-gray-200 px-3 py-2">
-          <p className="text-xs text-blue-600 flex items-center gap-1">
-            <span className="w-3 h-3 border-2 border-blue-600 border-t-transparent rounded-full animate-spin inline-block" />
-            위치를 가져오는 중...
-          </p>
-        </div>
-      )}
-
-      {/* 필터 영역 */}
-      <div className="bg-white border-b border-gray-200 px-3 py-2 shrink-0">
-        <div className="flex items-center gap-2">
-          {/* 필터 버튼 */}
-          {(() => {
-            const activeCount = [
-              district !== null,
-              cardType !== "all",
-              brand !== null,
-            ].filter(Boolean).length;
-            return (
-              <button
-                onClick={() => setFilterSheetOpen(true)}
-                className={cn(
-                  "flex items-center gap-1.5 h-9 px-3 text-sm border rounded-lg transition-colors shrink-0",
-                  activeCount > 0
-                    ? "border-blue-500 text-blue-600 bg-blue-50"
-                    : "border-gray-300 text-gray-600 bg-white"
-                )}
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 4h18M7 12h10M11 20h2" />
-                </svg>
-                필터
-                {activeCount > 0 && (
-                  <span className="w-4 h-4 text-[11px] font-bold bg-blue-600 text-white rounded-full flex items-center justify-center">
-                    {activeCount}
-                  </span>
-                )}
-              </button>
-            );
-          })()}
-
-          <div className="flex-1" />
-
-          <SortSelector
-            value={sortBy}
-            onChange={setSortBy}
-            showDistance={!!(lat && lng)}
+        {/* 지도 — 모바일: 상단 고정 / 데스크탑: order-2로 오른쪽 */}
+        <div className="relative shrink-0 lg:order-2 lg:flex-1">
+          <KakaoMap
+            stations={filteredStations}
+            favoriteIds={favoriteSet}
+            fuelType={fuelType}
+            center={mapCenter}
+            mapLevel={mapLevel}
+            userLocation={lat && lng && !isFallback ? { lat, lng } : null}
+            selectedStationId={selectedStationId}
+            onStationSelect={setSelectedStationId}
           />
-
-          {/* 검색 버튼 */}
-          <button
-            onClick={handleSearchToggle}
-            className={cn(
-              "shrink-0 w-8 h-8 flex items-center justify-center rounded-full transition-colors",
-              searchOpen
-                ? "bg-blue-600 text-white"
-                : "bg-gray-100 text-gray-500 hover:bg-gray-200"
-            )}
-            aria-label="주유소 이름 검색"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z" />
-            </svg>
-          </button>
+          {showFallbackToast && (
+            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-50 animate-fade-out">
+              <div className="bg-black/60 text-white text-sm px-4 py-2 rounded-lg whitespace-nowrap">
+                기본 위치를 광주광역시청으로 설정했다요
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* 검색 입력창 */}
-        {searchOpen && (
-          <div className="flex items-center gap-2 mt-2">
-            <input
-              ref={searchInputRef}
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="주유소 이름 검색"
-              className="flex-1 h-9 px-3 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
-            <button
-              onClick={() => { setSearchQuery(""); setSearchOpen(false); }}
-              className="shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200"
-              aria-label="검색 닫기"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
-        )}
-      </div>
+        {/* 필터 + 리스트 — 모바일: 나머지 / 데스크탑: order-1로 왼쪽 고정폭 */}
+        <div className="flex flex-col flex-1 lg:flex-none lg:w-[400px] lg:order-1 overflow-hidden">
 
-      {/* 주유소 리스트 */}
-      <div className="flex-1 min-h-0 bg-gray-50 overflow-y-auto pb-16">
-        <StationList
-          stations={filteredStations}
-          fuelType={fuelType}
-          favoriteIds={favoriteSet}
-          selectedStationId={selectedStationId}
-          isLoading={isLoading || (isNearby && locationLoading)}
-          onFavoriteToggle={toggleFavorite}
-          onStationSelect={setSelectedStationId}
-        />
+          {/* 위치 로딩 상태 (내 주변 모드) */}
+          {isNearby && locationLoading && (
+            <div className="bg-white border-b border-gray-200 px-3 py-2 shrink-0">
+              <p className="text-xs text-blue-600 flex items-center gap-1">
+                <span className="w-3 h-3 border-2 border-blue-600 border-t-transparent rounded-full animate-spin inline-block" />
+                위치를 가져오는 중...
+              </p>
+            </div>
+          )}
+
+          {/* 필터 영역 */}
+          <div className="bg-white border-b border-gray-200 px-3 py-2 shrink-0">
+            <div className="flex items-center gap-2">
+              {/* 필터 버튼 */}
+              {(() => {
+                const activeCount = [
+                  district !== null,
+                  cardType !== "all",
+                  brand !== null,
+                ].filter(Boolean).length;
+                return (
+                  <button
+                    onClick={() => setFilterSheetOpen(true)}
+                    className={cn(
+                      "flex items-center gap-1.5 h-9 px-3 text-sm border rounded-lg transition-colors shrink-0",
+                      activeCount > 0
+                        ? "border-blue-500 text-blue-600 bg-blue-50"
+                        : "border-gray-300 text-gray-600 bg-white"
+                    )}
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 4h18M7 12h10M11 20h2" />
+                    </svg>
+                    필터
+                    {activeCount > 0 && (
+                      <span className="w-4 h-4 text-[11px] font-bold bg-blue-600 text-white rounded-full flex items-center justify-center">
+                        {activeCount}
+                      </span>
+                    )}
+                  </button>
+                );
+              })()}
+
+              <div className="flex-1" />
+
+              <SortSelector
+                value={sortBy}
+                onChange={setSortBy}
+                showDistance={!!(lat && lng)}
+              />
+
+              {/* 검색 버튼 */}
+              <button
+                onClick={handleSearchToggle}
+                className={cn(
+                  "shrink-0 w-8 h-8 flex items-center justify-center rounded-full transition-colors",
+                  searchOpen
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                )}
+                aria-label="주유소 이름 검색"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z" />
+                </svg>
+              </button>
+            </div>
+
+            {/* 검색 입력창 */}
+            {searchOpen && (
+              <div className="flex items-center gap-2 mt-2">
+                <input
+                  ref={searchInputRef}
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="주유소 이름 검색"
+                  className="flex-1 h-9 px-3 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+                <button
+                  onClick={() => { setSearchQuery(""); setSearchOpen(false); }}
+                  className="shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200"
+                  aria-label="검색 닫기"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* 주유소 리스트 */}
+          <div className="flex-1 min-h-0 bg-gray-50 overflow-y-auto pb-16">
+            <StationList
+              stations={filteredStations}
+              fuelType={fuelType}
+              favoriteIds={favoriteSet}
+              selectedStationId={selectedStationId}
+              isLoading={isLoading || (isNearby && locationLoading)}
+              onFavoriteToggle={toggleFavorite}
+              onStationSelect={setSelectedStationId}
+            />
+          </div>
+
+        </div>
       </div>
 
       <BottomNav />
