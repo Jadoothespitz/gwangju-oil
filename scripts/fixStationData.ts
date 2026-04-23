@@ -5,6 +5,7 @@
  * 2. 평화셀프주유소 (opinet_id: A0019944) → name: "독도사랑주유소"
  * 4. 코끼리주유소 (opinet_id: A0019786) → isActive: false (오피넷 삭제됨, 영업 여부 불명)
  * 5. 풍암대림주유소 (uni_id: SS0092) → isActive: false (폐업)
+ * 6. 독도사랑주유소 (opinet_id: A0019944) → isActive: false (광주상생카드 미가맹 확인 2026-04-21)
  *
  * 사용법: npm run fix:stationdata
  */
@@ -89,6 +90,18 @@ async function fixStationData() {
       console.log(`✓ 풍암대림주유소 (${pungam.name}): isActive → false`);
     } else {
       console.log("✗ uni_id SS0092: 찾을 수 없음");
+    }
+
+    // 6. 독도사랑주유소 (opinet_id: A0019944) → isActive: false (광주상생카드 미가맹)
+    const dokdoActive = await col.findOne({ opinet_id: "A0019944" });
+    if (dokdoActive) {
+      await col.updateOne(
+        { _id: dokdoActive._id },
+        { $set: { isActive: false } }
+      );
+      console.log(`✓ 독도사랑주유소 (${dokdoActive.name}): isActive → false`);
+    } else {
+      console.log("✗ opinet_id A0019944: 찾을 수 없음");
     }
 
     console.log("\n완료");
