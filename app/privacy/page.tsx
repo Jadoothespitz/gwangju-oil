@@ -43,6 +43,13 @@ export default function PrivacyPage() {
               <li>
                 <strong>유종 선호</strong> — 휘발유/경유 선택은 브라우저 로컬 저장소에만 저장됩니다.
               </li>
+              <li>
+                <strong>제보 접수 시 IP 해시</strong> — &ldquo;제보하기&rdquo; 기능 이용 시,
+                중복·허위 제보 방지를 위해 접속 IP 주소를 <strong>SHA-256 해시로 변환하여 저장</strong>합니다.
+                원본 IP는 저장하지 않으며, 해시값은 어뷰징 감지 외의 목적으로 사용되지 않습니다.
+                제보 처리 완료(승인 또는 거절) 후 <strong>90일 이내에 자동 삭제</strong>됩니다.
+                (개인정보보호법 제15조 &ldquo;정당한 이익&rdquo; 근거, 제21조 파기 의무 준수)
+              </li>
             </ul>
           </section>
 
@@ -115,7 +122,7 @@ export default function PrivacyPage() {
         </div>
 
         <p className="text-center text-[11px] text-gray-400">
-          최종 수정일: 2026-03-14
+          최종 수정일: 2026-04-24
         </p>
       </div>
     </div>

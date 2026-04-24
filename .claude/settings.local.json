@@ -52,7 +52,11 @@
       "WebFetch(domain:gwangju-oil.vercel.app)",
       "Bash(rm \"d:/lacajadejugete/gwangju-gas/app/api/debug-env/route.ts\")",
       "Bash(rmdir \"d:/lacajadejugete/gwangju-gas/app/api/debug-env\")",
-      "WebFetch(domain:developers.kakaomobility.com)"
+      "WebFetch(domain:developers.kakaomobility.com)",
+      "WebFetch(domain:www.law.go.kr)",
+      "WebFetch(domain:www.pipc.go.kr)",
+      "WebFetch(domain:www.easylaw.go.kr)",
+      "WebFetch(domain:casenote.kr)"
     ]
   }
 }

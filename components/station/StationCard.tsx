@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import type { StationWithDistance, FuelType } from "@/types";
 import { formatDistance } from "@/lib/utils/formatPrice";
 import { cn } from "@/lib/utils/cn";
+import ReportButton from "./ReportButton";
 
 interface StationCardProps {
   station: StationWithDistance;
@@ -35,7 +36,9 @@ export default function StationCard({
   onClick,
 }: StationCardProps) {
   const [showNav, setShowNav] = useState(false);
+  const [showNotice, setShowNotice] = useState(false);
   const navRef = useRef<HTMLDivElement>(null);
+  const noticeRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!showNav) return;
@@ -47,6 +50,17 @@ export default function StationCard({
     document.addEventListener("click", handleClick);
     return () => document.removeEventListener("click", handleClick);
   }, [showNav]);
+
+  useEffect(() => {
+    if (!showNotice) return;
+    const handleClick = (e: MouseEvent) => {
+      if (noticeRef.current && !noticeRef.current.contains(e.target as Node)) {
+        setShowNotice(false);
+      }
+    };
+    document.addEventListener("click", handleClick);
+    return () => document.removeEventListener("click", handleClick);
+  }, [showNotice]);
 
   const price =
     fuelType === "diesel" ? station.prices.diesel : station.prices.gasoline;
@@ -108,6 +122,7 @@ export default function StationCard({
         {/* 오른쪽: 즐겨찾기/길찾기 + 가격 */}
         <div className="flex flex-col items-end gap-1 shrink-0">
           <div className="flex items-center gap-0.5">
+            <ReportButton stationUniId={station.uni_id} stationName={station.name} />
             <button
               onClick={(e) => { e.stopPropagation(); onFavoriteToggle(); }}
               className="p-1.5 rounded-full hover:bg-[#F3EFE5] transition-colors"
@@ -179,6 +194,35 @@ export default function StationCard({
           )}
         </div>
       </div>
+
+      {/* 운영자 공지 */}
+      {station.notice && (
+        <div className="mt-3 pt-3 border-t border-dashed border-[#E8E3D8]">
+          <div
+            className="relative inline-block group"
+            ref={noticeRef}
+            onClick={(e) => { e.stopPropagation(); setShowNotice((v) => !v); }}
+          >
+            <span className="flex items-center gap-1 text-[11px] font-semibold text-amber-700 bg-amber-50 border border-amber-200 px-2.5 py-0.5 rounded-full cursor-pointer select-none">
+              <svg className="w-3 h-3 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
+                <circle cx="12" cy="12" r="10" />
+                <path strokeLinecap="round" d="M12 8v4M12 16h.01" />
+              </svg>
+              운영자 공지
+            </span>
+            <div
+              className={cn(
+                "absolute bottom-full left-0 mb-2 w-max max-w-[220px] bg-[#0E0E12] text-white text-[11px] leading-relaxed rounded-xl px-3 py-2 shadow-lg z-50 whitespace-pre-wrap pointer-events-none",
+                "opacity-0 group-hover:opacity-100 transition-opacity",
+                showNotice && "opacity-100"
+              )}
+            >
+              {station.notice}
+              <span className="absolute top-full left-4 border-4 border-transparent border-t-[#0E0E12]" />
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 상품권 섹션 */}
       {hasVouchers && (

@@ -39,6 +39,7 @@ export interface Station {
     matchMethod?: MatchMethod;
   };
   onnuri?: boolean;
+  notice?: string;
   isActive: boolean;
   lastSyncedAt: string;
   createdAt: string;
@@ -106,6 +107,28 @@ export const BRAND_NAMES: Record<string, string> = {
 };
 
 export const DISTRICTS: District[] = ["광산구", "서구", "북구", "동구", "남구"];
+
+export type ReportType = "closed" | "no_card" | "other";
+export type ReportStatus = "pending" | "approved" | "rejected";
+
+export interface Report {
+  _id: string;
+  station_uni_id: string;
+  station_name: string;
+  type: ReportType;
+  comment?: string;
+  ipHash: string;
+  userAgent: string;
+  createdAt: string;
+  status: ReportStatus;
+  reviewedAt?: string;
+}
+
+export const REPORT_TYPE_LABELS: Record<ReportType, string> = {
+  closed: "폐업",
+  no_card: "상생카드 미가맹",
+  other: "기타",
+};
 
 export const FUEL_CODES = {
   gasoline: "B027",
