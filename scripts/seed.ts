@@ -14,7 +14,7 @@ import { MongoClient } from "mongodb";
 
 // ISP DNS가 MongoDB SRV 레코드를 못 찾는 경우 Google DNS 사용
 dns.setServers(["8.8.8.8", "8.8.4.4"]);
-import { extractDistrict, extractDong } from "../lib/matching/addressNormalizer";
+import { extractDistrict, extractDong, isAddressMatch } from "../lib/matching/addressNormalizer";
 import { getAreaByDong } from "../lib/gwangju/areas";
 import { downloadAndParse } from "./downloadSangsaeng";
 import { geocodeSangsaengStations } from "./geocodeSangsaeng";
@@ -64,6 +64,12 @@ async function seed() {
     const db = client.db("gwangju-oil");
     const collection = db.collection("stations");
 
+    // 텔레그램으로 폐업 처리(isActive: false)된 주유소는 재시딩 후에도 유지
+    const closedStations = await collection
+      .find({ isActive: false }, { projection: { name: 1, address: 1 } })
+      .toArray();
+    console.log(`기존 폐업 처리 주유소 ${closedStations.length}개 발견 (재시딩 후에도 유지됨)`);
+
     // 기존 데이터 정리
     await collection.deleteMany({});
 
@@ -75,6 +81,10 @@ async function seed() {
 
       // 상생카드 주유소 고유 ID 생성
       const stationId = `SS${String(index + 1).padStart(4, "0")}`;
+
+      const isClosed = closedStations.some(
+        (c) => c.name === station.name && isAddressMatch(c.address, station.address)
+      );
 
       return {
         uni_id: stationId,
@@ -100,7 +110,7 @@ async function seed() {
           merchantName: station.name,
           merchantAddress: station.address,
         },
-        isActive: true,
+        isActive: !isClosed,
         lastSyncedAt: now,
         createdAt: now,
         updatedAt: now,
