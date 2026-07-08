@@ -38,7 +38,10 @@ export async function POST(
   if (type === "closed") {
     await stations.updateOne(
       { uni_id: report.station_uni_id },
-      { $set: { isActive: false, updatedAt: new Date().toISOString() } }
+      {
+        $set: { isActive: false, updatedAt: new Date().toISOString() },
+        $unset: { paused: "", pausedAt: "" },
+      }
     );
   } else if (type === "no_card") {
     await stations.updateOne(

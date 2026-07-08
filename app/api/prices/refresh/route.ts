@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
 
     const stations = await collection
       .find(
-        { isActive: true, opinet_id: { $exists: true, $ne: null } },
+        { isActive: true, paused: { $ne: true }, opinet_id: { $exists: true, $ne: null } },
         { projection: { opinet_id: 1, name: 1 } }
       )
       .toArray();

@@ -40,6 +40,8 @@ export interface Station {
   };
   onnuri?: boolean;
   notice?: string;
+  paused?: boolean;
+  pausedAt?: string;
   isActive: boolean;
   lastSyncedAt: string;
   createdAt: string;

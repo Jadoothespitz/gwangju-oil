@@ -27,6 +27,34 @@ export async function POST(request: NextRequest) {
 
     const text: string = message.text ?? "";
 
+    // /help — 사용 가능한 명령어 목록 (새 명령어 추가 시 이 목록도 함께 갱신할 것)
+    if (text.trim() === "/help") {
+      const helpText = [
+        `🤖 <b>사용 가능한 명령어</b>`,
+        ``,
+        `<b>주유소 상태</b>`,
+        `/inactive {코드} — 폐업 확정 처리`,
+        `/pause {코드} — 일시 중지 (사이트에서만 숨김, 되돌릴 수 있음)`,
+        `/resume {코드} — 일시 중지 해제`,
+        `/paused — 현재 일시 중지된 주유소 목록`,
+        ``,
+        `<b>공지</b>`,
+        `/notice {코드} {내용} — 운영자 공지 설정`,
+        `/clearnotice {코드} — 운영자 공지 삭제`,
+        ``,
+        `<b>제보</b>`,
+        `/reports — 미처리 제보 목록`,
+        `/approve {제보ID} — 제보 승인`,
+        ``,
+        `<b>현황</b>`,
+        `/status — 2일 이상 가격 미갱신 주유소 목록`,
+        ``,
+        `※ {코드}는 opinet_id·uni_id 둘 다 가능`,
+      ].join("\n");
+      await sendTelegram(chatId, helpText);
+      return NextResponse.json({ ok: true });
+    }
+
     // /inactive {opinet_id} — 폐업 처리
     const inactiveMatch = text.match(/^\/inactive\s+(\S{1,20})/i);
     if (inactiveMatch) {
@@ -48,11 +76,76 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ ok: true });
       }
 
-      await col.updateOne({ _id: station._id }, { $set: { isActive: false } });
+      await col.updateOne(
+        { _id: station._id },
+        { $set: { isActive: false }, $unset: { paused: "", pausedAt: "" } }
+      );
       await sendTelegram(
         chatId,
         `✅ <b>${station.name}</b> (${opinetId}) 폐업 처리 완료\nisActive → false`
       );
+      return NextResponse.json({ ok: true });
+    }
+
+    // /pause {opinet_id|uni_id} — 일시 중지 (폐업 여부 불확실, 사이트 노출만 숨김)
+    const pauseMatch = text.match(/^\/pause\s+(\S{1,20})/i);
+    if (pauseMatch) {
+      const code = pauseMatch[1].trim();
+      const db = await getDb();
+      const col = db.collection("stations");
+
+      const station = await col.findOne({
+        $or: [{ opinet_id: code }, { uni_id: code }],
+      });
+
+      if (!station) {
+        await sendTelegram(chatId, `❌ <code>${code}</code> — 주유소를 찾을 수 없습니다.`);
+        return NextResponse.json({ ok: true });
+      }
+
+      if (station.paused) {
+        await sendTelegram(chatId, `ℹ️ <b>${station.name}</b> — 이미 일시 중지 상태입니다.`);
+        return NextResponse.json({ ok: true });
+      }
+
+      const now = new Date().toISOString();
+      await col.updateOne(
+        { _id: station._id },
+        { $set: { paused: true, pausedAt: now, updatedAt: now } }
+      );
+      await sendTelegram(
+        chatId,
+        `⏸️ <b>${station.name}</b> (${code}) 일시 중지 완료\n사이트 목록에서 숨김 처리됨. 재개: <code>/resume ${code}</code>`
+      );
+      return NextResponse.json({ ok: true });
+    }
+
+    // /resume {opinet_id|uni_id} — 일시 중지 해제
+    const resumeMatch = text.match(/^\/resume\s+(\S{1,20})/i);
+    if (resumeMatch) {
+      const code = resumeMatch[1].trim();
+      const db = await getDb();
+      const col = db.collection("stations");
+
+      const station = await col.findOne({
+        $or: [{ opinet_id: code }, { uni_id: code }],
+      });
+
+      if (!station) {
+        await sendTelegram(chatId, `❌ <code>${code}</code> — 주유소를 찾을 수 없습니다.`);
+        return NextResponse.json({ ok: true });
+      }
+
+      if (!station.paused) {
+        await sendTelegram(chatId, `ℹ️ <b>${station.name}</b> — 일시 중지 상태가 아닙니다.`);
+        return NextResponse.json({ ok: true });
+      }
+
+      await col.updateOne(
+        { _id: station._id },
+        { $unset: { paused: "", pausedAt: "" }, $set: { updatedAt: new Date().toISOString() } }
+      );
+      await sendTelegram(chatId, `▶️ <b>${station.name}</b> (${code}) 재개 완료\n사이트 목록에 다시 노출됨`);
       return NextResponse.json({ ok: true });
     }
 
@@ -108,7 +201,10 @@ export async function POST(request: NextRequest) {
       if (report.type === "closed") {
         await db.collection("stations").updateOne(
           { uni_id: report.station_uni_id },
-          { $set: { isActive: false, updatedAt: new Date().toISOString() } }
+          {
+            $set: { isActive: false, updatedAt: new Date().toISOString() },
+            $unset: { paused: "", pausedAt: "" },
+          }
         );
       } else if (report.type === "no_card") {
         await db.collection("stations").updateOne(
@@ -130,37 +226,37 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ ok: true });
     }
 
-    // /notice {uni_id} {text} — 운영자 공지 설정
+    // /notice {opinet_id|uni_id} {text} — 운영자 공지 설정
     const noticeMatch = text.match(/^\/notice\s+(\S+)\s+([\s\S]{1,100})/i);
     if (noticeMatch) {
-      const uniId = noticeMatch[1].trim();
+      const stationCode = noticeMatch[1].trim();
       const noticeText = noticeMatch[2].trim();
       const db = await getDb();
       const result = await db.collection("stations").updateOne(
-        { uni_id: uniId },
+        { $or: [{ opinet_id: stationCode }, { uni_id: stationCode }] },
         { $set: { notice: noticeText, updatedAt: new Date().toISOString() } }
       );
       if (result.matchedCount === 0) {
-        await sendTelegram(chatId, `❌ <code>${uniId}</code> — 주유소를 찾을 수 없습니다.`);
+        await sendTelegram(chatId, `❌ <code>${stationCode}</code> — 주유소를 찾을 수 없습니다.`);
       } else {
-        await sendTelegram(chatId, `✅ 공지 설정 완료\n<b>${uniId}</b>: "${noticeText}"`);
+        await sendTelegram(chatId, `✅ 공지 설정 완료\n<b>${stationCode}</b>: "${noticeText}"`);
       }
       return NextResponse.json({ ok: true });
     }
 
-    // /clearnotice {uni_id} — 운영자 공지 삭제
+    // /clearnotice {opinet_id|uni_id} — 운영자 공지 삭제
     const clearNoticeMatch = text.match(/^\/clearnotice\s+(\S+)/i);
     if (clearNoticeMatch) {
-      const uniId = clearNoticeMatch[1].trim();
+      const stationCode = clearNoticeMatch[1].trim();
       const db = await getDb();
       const result = await db.collection("stations").updateOne(
-        { uni_id: uniId },
+        { $or: [{ opinet_id: stationCode }, { uni_id: stationCode }] },
         { $unset: { notice: "" }, $set: { updatedAt: new Date().toISOString() } }
       );
       if (result.matchedCount === 0) {
-        await sendTelegram(chatId, `❌ <code>${uniId}</code> — 주유소를 찾을 수 없습니다.`);
+        await sendTelegram(chatId, `❌ <code>${stationCode}</code> — 주유소를 찾을 수 없습니다.`);
       } else {
-        await sendTelegram(chatId, `✅ <b>${uniId}</b> 공지 삭제 완료`);
+        await sendTelegram(chatId, `✅ <b>${stationCode}</b> 공지 삭제 완료`);
       }
       return NextResponse.json({ ok: true });
     }
@@ -173,6 +269,7 @@ export async function POST(request: NextRequest) {
         .collection("stations")
         .find({
           isActive: true,
+          paused: { $ne: true },
           opinet_id: { $exists: true, $ne: null },
           $or: [
             { "prices.updatedAt": { $lt: twoDaysAgo } },
@@ -189,7 +286,30 @@ export async function POST(request: NextRequest) {
         );
         await sendTelegram(
           chatId,
-          `⚠️ <b>미갱신 주유소 ${stale.length}개</b>\n\n${lines.join("\n")}\n\n폐업 처리: <code>/inactive {opinet_id}</code>`
+          `⚠️ <b>미갱신 주유소 ${stale.length}개</b>\n\n${lines.join("\n")}\n\n폐업 처리: <code>/inactive {opinet_id}</code>\n확실하지 않으면: <code>/pause {opinet_id}</code>`
+        );
+      }
+      return NextResponse.json({ ok: true });
+    }
+
+    // /paused — 일시 중지된 주유소 현황
+    if (text.trim() === "/paused") {
+      const db = await getDb();
+      const paused = await db.collection("stations").find({ paused: true }).toArray();
+
+      if (paused.length === 0) {
+        await sendTelegram(chatId, "✅ 일시 중지된 주유소 없음");
+      } else {
+        const now = Date.now();
+        const lines = paused.map((s) => {
+          const days = s.pausedAt
+            ? Math.floor((now - new Date(s.pausedAt).getTime()) / 86400000)
+            : null;
+          return `• <b>${s.name}</b> (${s.opinet_id ?? s.uni_id}) — ${days != null ? `${days}일째 중지` : "중지 시점 불명"}`;
+        });
+        await sendTelegram(
+          chatId,
+          `⏸️ <b>일시 중지 주유소 ${paused.length}개</b>\n\n${lines.join("\n")}\n\n재개: <code>/resume {code}</code> · 폐업 확정: <code>/inactive {code}</code>`
         );
       }
       return NextResponse.json({ ok: true });

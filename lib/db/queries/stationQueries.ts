@@ -24,7 +24,7 @@ export async function findStations(
 ): Promise<{ stations: StationWithDistance[]; total: number }> {
   const collection = await getStationsCollection();
 
-  const matchFilter: Filter<Document> = { isActive: true };
+  const matchFilter: Filter<Document> = { isActive: true, paused: { $ne: true } };
 
   if (options.cardType === "sangsaeng") {
     matchFilter["sangsaeng.matched"] = true;
@@ -148,6 +148,7 @@ export async function findNearbyStations(options: {
 
   const matchStage: Document = {
     isActive: true,
+    paused: { $ne: true },
   };
 
   if (options.cardType === "sangsaeng") {

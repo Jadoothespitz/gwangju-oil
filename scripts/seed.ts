@@ -70,6 +70,12 @@ async function seed() {
       .toArray();
     console.log(`기존 폐업 처리 주유소 ${closedStations.length}개 발견 (재시딩 후에도 유지됨)`);
 
+    // 텔레그램으로 일시 중지(paused: true) 처리된 주유소도 재시딩 후 유지
+    const pausedStations = await collection
+      .find({ paused: true }, { projection: { name: 1, address: 1, pausedAt: 1 } })
+      .toArray();
+    console.log(`기존 일시 중지 주유소 ${pausedStations.length}개 발견 (재시딩 후에도 유지됨)`);
+
     // 기존 데이터 정리
     await collection.deleteMany({});
 
@@ -84,6 +90,9 @@ async function seed() {
 
       const isClosed = closedStations.some(
         (c) => c.name === station.name && isAddressMatch(c.address, station.address)
+      );
+      const pausedMatch = pausedStations.find(
+        (p) => p.name === station.name && isAddressMatch(p.address, station.address)
       );
 
       return {
@@ -111,6 +120,7 @@ async function seed() {
           merchantAddress: station.address,
         },
         isActive: !isClosed,
+        ...(pausedMatch ? { paused: true, pausedAt: pausedMatch.pausedAt } : {}),
         lastSyncedAt: now,
         createdAt: now,
         updatedAt: now,

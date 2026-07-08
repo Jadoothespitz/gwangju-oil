@@ -97,7 +97,7 @@ async function refreshPrices() {
 
     const stations = await collection
       .find(
-        { isActive: true, opinet_id: { $exists: true, $ne: null } },
+        { isActive: true, paused: { $ne: true }, opinet_id: { $exists: true, $ne: null } },
         { projection: { opinet_id: 1, name: 1, prices: 1 } }
       )
       .toArray();
@@ -264,6 +264,7 @@ async function refreshPrices() {
         ...staleLines,
         ``,
         `폐업이면 답장: <code>/inactive {opinet_id}</code>`,
+        `확실하지 않으면: <code>/pause {opinet_id}</code>`,
       ].join("\n");
       await sendTelegram(msg);
       console.log(`\nTelegram 알림 전송: ${stale.length}개 주유소 미갱신`);
