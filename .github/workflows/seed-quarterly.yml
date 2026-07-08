@@ -35,3 +35,8 @@ jobs:
           MONGODB_URI: ${{ secrets.MONGODB_URI }}
           OPINET_API_KEY: ${{ secrets.OPINET_API_KEY }}
         run: npm run opinet:link
+
+      - name: 수동 데이터 보정 재적용
+        env:
+          MONGODB_URI: ${{ secrets.MONGODB_URI }}
+        run: npm run fix:stationdata
