@@ -43,7 +43,14 @@ async function fixStationData() {
     }
 
     // 2. 독도사랑주유소 (구 평화셀프주유소, opinet_id: A0019944) → name 수정
-    const dokdo = await col.findOne({ opinet_id: "A0019944" });
+    //    오피넷 매칭이 안 되면 opinet_id가 없으므로 상생카드 원본 이름으로도 찾는다
+    const dokdoFilter = {
+      $or: [
+        { opinet_id: "A0019944" },
+        { name: { $regex: "^(평화셀프주유소|독도사랑주유소)" } },
+      ],
+    };
+    const dokdo = await col.findOne(dokdoFilter);
     if (dokdo) {
       await col.updateOne(
         { _id: dokdo._id },
@@ -51,7 +58,7 @@ async function fixStationData() {
       );
       console.log(`✓ 독도사랑주유소 (구: ${dokdo.name}): name → 독도사랑주유소`);
     } else {
-      console.log("✗ opinet_id A0019944: 찾을 수 없음");
+      console.log("✗ 독도사랑주유소 (opinet_id A0019944 / 평화셀프주유소): 찾을 수 없음");
     }
 
     // 3. 무지개주유소 경훈에너지 (opinet_id: A0019350) → brand: "ETC", brandName: "기타"
@@ -93,7 +100,7 @@ async function fixStationData() {
     }
 
     // 6. 독도사랑주유소 (opinet_id: A0019944) → isActive: false (광주상생카드 미가맹)
-    const dokdoActive = await col.findOne({ opinet_id: "A0019944" });
+    const dokdoActive = await col.findOne(dokdoFilter);
     if (dokdoActive) {
       await col.updateOne(
         { _id: dokdoActive._id },
@@ -101,7 +108,7 @@ async function fixStationData() {
       );
       console.log(`✓ 독도사랑주유소 (${dokdoActive.name}): isActive → false`);
     } else {
-      console.log("✗ opinet_id A0019944: 찾을 수 없음");
+      console.log("✗ 독도사랑주유소 (opinet_id A0019944 / 평화셀프주유소): 찾을 수 없음");
     }
 
     console.log("\n완료");
